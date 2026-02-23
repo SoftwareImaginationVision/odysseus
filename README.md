@@ -1,133 +1,222 @@
-# Project Title
+# ODYSSEUS Backend Services
 
-Choose and leave only one of the following badge
+## Gaia-X Aligned Microservices Repository
 
-![REPO-TYPE](https://img.shields.io/badge/repo--type-frontend-green?style=for-the-badge&logo=github)
+![REPO-TYPE](https://img.shields.io/badge/repo--type-backend-blue?style=for-the-badge&logo=github)
+![ARCH](https://img.shields.io/badge/architecture-microservices-orange?style=for-the-badge)
+![COMPLIANCE](https://img.shields.io/badge/Gaia--X-aligned-success?style=for-the-badge)
 
-The project is used to manage the whole UI by a UI container
-There are two main functionalities. One functionality display information from different sources, and another one used to host application frames
+------------------------------------------------------------------------
 
-## Getting Started
+# 1. Executive Summary
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-On a local machine, just get the jar file and execute it 
-For example java -jar homeapp-0.0.1-SNAPSHOT.jar
+This repository contains two backend/frontend microservices/microfrontends forming part of the
+ODYSSEUS platform, designed in alignment with Gaia-X principles:
 
-If you want to use a specific profile, enter it in the command line
-For example to use the test profile, just use the command
-java -Dspring.profiles.active=test -jar homeapp-0.0.1-SNAPSHOT.jar
+-   Sovereignty & Federated Architecture\
+-   Secure Identity & Access Management\
+-   Interoperability & Portability\
+-   Transparency & Traceability\
+-   Open Standards & Open APIs
 
-To build the docker image, follow the steps:
-1. Copy docker/Dockerfile in the root folder of the system. 
-2. Be sure that under the root there is target/homeapp-0.0.1-SNAPSHOT.jar
-3. Run the command docker build -t homeapp . (be carefull to use dot at the end)
-4. Wait the image to be created.
+The services are:
 
-To run the docker image
-1. Run the docker command: docker run -d homeapp
-2. 
+  Service    Purpose
+  ---------- ---------------------------------------------------
+  HomeApp    Backend management service for BCP application, and frontend for BCP
+  Traveler   Functional backend service for traveler application, and Web frontend for tarveler application
 
+Both services are implemented as independent Spring Boot microservices, using also JSF and Primefaces
+deployable standalone or containerized.
 
-### Prerequisites
+------------------------------------------------------------------------
 
-The project is developed as a microservice.
-It is developed on Java 11.
-The only thing necessary to run application is the JVM 11 or newer
-You can run the application by calling:
-java <app.name.jar>
-The application is by default using port 6099. On development profile it is 16099
-There is also a docker file, which can be used to create a docker image.
+# 2. Architecture Overview
 
-```
-Give examples
-```
-### Security
-The application is using Keycloack.
-test profile is using keycloack installed on the platform (10.129.150.116)
-production profile is using keycloack installed on ENG data lake environment
-development environment is using a local keycloack
-realm: MES-CoBrad
-client: home-app
-user: <tbd>
-password:<tbd>
-for testing the client used is public
+## 2.1 Architectural Style
 
-### Installing
+-   Microservices Architecture\
+-   Stateless REST APIs\
+-   Container-ready\
+-   Profile-based configuration (dev/test/prod)
 
-A step by step series of examples that tell you how to get a development env running
-To install on a standalone system (no docker) just copy the jar file in the choosend working directory.
-For example copy homeapp-0.0.1-SNAPSHOT.jar in /tmp/ folder
+## 2.2 Technology Stack
 
-To build the docker image, follow the steps:
-1. Copy docker/Dockerfile in the root folder of the system.
-2. Be sure that under the root there is target/homeapp-0.0.1-SNAPSHOT.jar
-3. Run the command docker build -t homeapp . (be carefull to use dot at the end)
-4. Wait the image to be created.
+  Layer               Technology
+  ------------------- -------------
+  Runtime             Java 11
+  Framework           Spring Boot
+  Build               Maven
+  Containerization    Docker
+  Identity & Access   Keycloak
+  Versioning          SemVer
+  JSF		      Primefaces
 
-To save the image
-1. Run docker save, for example docker image save -o homeapp.tar homeapp
-## Running the tests
+------------------------------------------------------------------------
 
-Explain how to run the automated tests for this system
+# 3. Service Catalogue
 
-### Break down into end to end tests
+## 3.1 HomeApp Service
 
-Explain what these tests test and why
+Description:\
+Manages backend application logic for the BCP system.
 
-```
-Give an example
-```
+Artifact:\
+odysseus-homeapp-0.0.1-SNAPSHOT.jar
 
-### And coding style tests
+Default Ports: - 6099 (default) - 16099 (development)
 
-Explain what these tests test and why
+Keycloak Configuration: - Realm: ODYSSEUS - Client: home-app
 
-```
-Give an example
-```
+------------------------------------------------------------------------
 
-## Deployment
+## 3.2 Traveler Service
 
-To deploy on a system without docker:
-1. Check that the curent version of java running is 11
-2. Copy the jar file in a choosen location. For example copy homeapp-0.0.1-SNAPSHOT.jar in /tmp/ folder
-3. Go to the folder where the jar file is. For example cd /tmp
-4. Run java -jar command. Use in command line the appropriate profile. For example java -jar homeapp-0.0.1-SNAPSHOT.jar
-If you want to use a specific profile, enter it in the command line
-For example to use the test profile, just use the command
-java -Dspring.profiles.active=test -jar homeapp-0.0.1-SNAPSHOT.jar
+Description:\
+Provides backend functionalities for the trader application.
 
+Artifact:\
+odysseus-traveler-0.0.1-SNAPSHOT.jar
 
-To run the docker image
-1. Verify that the image exists. Run docker image ls and search the homeapp iamge
-2. Run the docker command: docker run -d -p 26099:6099 mainhome
+Default Ports: - 6099 (default) - 16099 (development)
 
-## Built With
+Keycloak Configuration: - Realm: ODYSSEUS - Client: odysseus-app
 
-* [SpringBoot](http://springboot.io) - The Java framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
+------------------------------------------------------------------------
 
-## Contributing
+# 4. Gaia-X Alignment
 
-Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+## 4.1 Identity & Access Management
 
-## Versioning
+Both services integrate with Keycloak, ensuring:
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](tags). 
+-   Federated identity support\
+-   OAuth2 / OpenID Connect compliance\
+-   Role-based access control\
+-   Environment-specific identity providers
 
-## Authors
+------------------------------------------------------------------------
 
-* **Name Surname** - *Role* - [githubnickname](github_profile_url)
-Iacob Crucianu - simavi developer
-* 
-See also the list of [contributors](contributors) who participated in this project.
+## 4.2 Interoperability
 
-## License
+-   RESTful APIs\
+-   JSON-based communication\
+-   Environment profile isolation\
+-   Containerized deployment model
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+Deployable on: - On-premise infrastructure\
+- Private cloud\
+- Public cloud\
+- Federated infrastructures
 
-## Acknowledgments
+------------------------------------------------------------------------
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+## 4.3 Portability & Containerization
+
+Example:
+
+docker build -t homeapp . docker run -d -p 26099:6099 homeapp
+
+------------------------------------------------------------------------
+
+# 5. Deployment Model
+
+## 5.1 Standalone JVM Deployment
+
+Requirements: - Java 11+
+
+Execution:
+
+java -jar `<service>`{=html}.jar
+
+Profile selection:
+
+java -Dspring.profiles.active=test -jar `<service>`{=html}.jar
+
+------------------------------------------------------------------------
+
+## 5.2 Container Deployment
+
+Build:
+
+docker build -t `<image-name>`{=html} .
+
+Run:
+
+docker run -d -p `<external-port>`{=html}:6099 `<image-name>`{=html}
+
+------------------------------------------------------------------------
+
+# 6. Environment Profiles
+
+  Profile       Purpose
+  ------------- --------------------------------------
+  development   Local testing with local Keycloak
+  test          Platform integration testing
+  production    Deployment in AMAZON / SIMAVI data lake
+
+------------------------------------------------------------------------
+
+# 7. Security Model
+
+The security model includes:
+
+-   OAuth2 authentication\
+-   OpenID Connect tokens\
+-   Centralized identity management\
+-   Realm-based isolation\
+-   Role-based authorization
+
+Realm used: ODYSSEUS
+
+------------------------------------------------------------------------
+
+# 8. Build & Lifecycle Management
+
+From each service directory:
+
+mvn clean install
+
+Tests:
+
+mvn test
+
+Artifacts generated in:
+
+target/
+
+------------------------------------------------------------------------
+
+# 9. Governance & Contribution
+
+-   Versioning follows Semantic Versioning\
+-   Contributors listed in repository\
+-   Pull request workflow defined in CONTRIBUTING.md\
+-   MIT License
+
+Primary Contributor: - Iacob Crucianu -- SIMAVI Developer
+
+------------------------------------------------------------------------
+
+# 10. Compliance Considerations
+
+This repository aligns with Gaia-X principles through:
+
+-   Federated identity integration\
+-   Container portability\
+-   Open standards adoption\
+-   Microservices modularity\
+-   Transparent deployment model\
+-   Profile-based environment separation
+
+Future extensions may include: - Service Self-Description (SD)\
+- Policy rules declaration\
+- Data sovereignty metadata\
+- Federation catalog registration\
+- Trust anchor integration
+
+------------------------------------------------------------------------
+
+# 11. License
+
+Licensed under the MIT License. See LICENSE.md for details.
