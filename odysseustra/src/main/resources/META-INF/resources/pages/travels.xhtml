@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Travels</h2>
+
+        <h:form id="odsTravelForm">
+            <p:growl id="msgs" showDetail="true"/>
+            <p:dataTable id="dataTableOdsTravel" var="travel" value="#{odsTravelController.travelList}"
+                         selection="#{odsTravelController.odsTravelSelected}"
+                         emptyMessage="No travel found with given criteria"
+                         showGridlines="true"
+                         rows="5" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+                <f:facet name="header">
+                    <div class="flex justify-content-between align-items-center">
+                        List of travels
+                        <div>
+                            <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                            <p:columnToggler datasource="dataTableOdsTravel" trigger="toggler">
+                                <p:ajax />
+                            </p:columnToggler>
+                        </div>
+                    </div>
+                </f:facet>
+
+                <p:column headerText="ID" sortBy="#{travel.id}" sortOrder="desc">
+                    <h:outputText value="#{travel.id}" />
+                </p:column>
+                <p:column headerText="Travel Name">
+                    <h:outputText value="#{travel.travelName}" />
+                </p:column>
+
+                <p:column headerText="Start date">
+                    <h:outputText value="#{travel.startDate}">
+                        <f:converter converterId="localDateConverter" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="End date">
+                    <h:outputText value="#{travel.endDate}">
+                        <f:converter converterId="localDateConverter" />
+                    </h:outputText>
+                </p:column>
+                <p:column headerText="BCP Planned" >
+                    <h:outputText value="#{travel.bcpPlanned}" />
+                </p:column>
+
+                <p:column headerText="Passing Date Planned">
+                    <h:outputText value="#{travel.passingDatePlanned}">
+                        <f:converter converterId="localDateConverter" />
+                    </h:outputText>
+                </p:column>
+
+                <p:column headerText="Means of Transport Type" >
+                    <h:outputText value="#{travel.meansOfTransportType}" />
+                </p:column>
+
+                <p:column headerText="Means of Transport Identification" >
+                    <h:outputText value="#{travel.meansOfTransportIdentification}" />
+                </p:column>
+
+                <p:column headerText="Passenger Id" >
+                    <h:outputText value="#{travel.passengerId}" />
+                </p:column>
+
+                <p:column headerText="Description" >
+                    <h:outputText value="#{travel.description}" />
+                </p:column>
+
+                <p:column headerText="Travel Status" >
+                    <h:outputText value="#{travel.travelStatus}" />
+                </p:column>
+                <p:column headerText="Document" >
+                    <h:outputText value="#{travel.documentNumber}" />
+                </p:column>
+
+
+
+                <p:column headerText="Actions" width = "75">
+
+                    <p:commandButton icon="pi pi-pencil" update=":dialogsOdsTravel:manage-odsTravel-content" id="editOdsTravel"
+                                     oncomplete="PF('manageOdsTravel').show()"
+                                     styleClass="edit-button rounded-button ui-button-success">
+                        <f:setPropertyActionListener value="#{travel}"
+                                                     target="#{odsTravelController.odsTravelSelected}" />
+                    </p:commandButton>
+                    <p:tooltip for="editOdsTravel" value="Edit" showEffect="clip" hideEffect="fold" position="top"/>
+
+                    <p:commandButton class="ui-button-warning rounded-button" id="deleteOdsTravel"
+                                     oncomplete="PF('deleteOdsTravelDialog').show()"
+                                     icon="pi pi-trash">
+                        <f:setPropertyActionListener value="#{travel}"
+                                                     target="#{odsTravelController.odsTravelSelected}" />
+                    </p:commandButton>
+
+                    <p:tooltip for="deleteOdsTravel" value="Delete" showEffect="clip" hideEffect="fold" position="top"/>
+
+                </p:column>
+
+            </p:dataTable>
+            <p:toolbar >
+                <p:toolbarGroup>
+                    <p:commandButton value="New Travel" icon="pi pi-plus"
+                                     actionListener="#{odsTravelController.createNewOdsTravel()}"
+                                     update=":dialogsOdsTravel:manage-odsTravel-content"
+                                     oncomplete="PF('manageOdsTravel').show()"
+                                     style="width: 150px;float:right;margin-right: 2.5rem; background-color: #1c7d73;">
+                        <p:resetInput target=":dialogsOdsTravel:manage-odsTravel-content" />
+                    </p:commandButton>
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
+
+        <h:form id="dialogsOdsTravel">
+
+            <p:dialog header="Travel" showEffect="fade" widgetVar="manageOdsTravel" responsive="true">
+                <p:outputPanel id="manage-odsTravel-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty odsTravelController.odsTravelSelected}">
+                        <div class="ui-grid ui-fluid" style="max-height: 460px; max-width: 750px; overflow-y: auto; padding: 10px;">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="travelName">Travel Name</p:outputLabel>
+                                    <p:inputText id="travelName" value="#{odsTravelController.odsTravelSelected.travelName}" />
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="description">Description</p:outputLabel>
+                                    <p:inputText id="description" value="#{odsTravelController.odsTravelSelected.description}" />
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="travelStatus">Travel Status</p:outputLabel>
+                                    <p:inputText id="travelStatus" value="#{odsTravelController.odsTravelSelected.travelStatus}" />
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="endDate">End Date</p:outputLabel>
+                                    <p:calendar id="endDate" value="#{odsTravelController.odsTravelSelected.endDate}" pattern="yyyy-MM-dd"  showOn="button" navigator="true" />
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="bcpPlanned">Bcp Planned</p:outputLabel>
+                                    <p:inputText id="bcpPlanned" value="#{odsTravelController.odsTravelSelected.bcpPlanned}" />
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="passingDatePlanned">Passing Date Planned</p:outputLabel>
+                                    <p:calendar id="passingDatePlanned" value="#{odsTravelController.odsTravelSelected.passingDatePlanned}" pattern="yyyy-MM-dd"  showOn="button" navigator="true" />
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="meansOfTransportType">Means of Transport Type</p:outputLabel>
+                                    <p:inputText id="meansOfTransportType" value="#{odsTravelController.odsTravelSelected.meansOfTransportType}" />
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="meansOfTransportTypeIden">Means of Transport Type Identification</p:outputLabel>
+                                    <p:inputText id="meansOfTransportTypeIden" value="#{odsTravelController.odsTravelSelected.meansOfTransportIdentification}" />
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="@next" value="Document"/>
+                                    <p:selectOneMenu id="option" value="#{odsTravelController.odsTravelSelected.documentNumber}">
+                                        <f:selectItem itemLabel="Select One" itemValue=""/>
+                                        <f:selectItems value="#{odsDocumentController.documentList}" var="document"
+                                                       itemLabel="#{document.documentType}" itemValue="#{document.documentType}" />
+                                     </p:selectOneMenu>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </p:outputPanel>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{odsTravelController.saveOdsTravel()}"
+                                     update="odsTravelForm:dataTableOdsTravel"
+                                     oncomplete="PF('manageOdsTravel').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageOdsTravel').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+        <h:form id="formConfirmDialog">
+
+            <p:confirmDialog widgetVar="deleteOdsTravelDialog" showEffect="fade" width="300"
+                             message="Delete this travel?" header="Confirm" severity="warn" appendTo="@(body)" >
+                <p:commandButton value="Yes" icon="pi pi-check"
+                                 actionListener="#{odsTravelController.deleteOdsTravel}"
+                                 oncomplete="PF('deleteOdsTravelDialog').hide()" />
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteOdsTravelDialog').hide()" />
+            </p:confirmDialog>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+</html>

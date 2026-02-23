@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Dashboard</h2>
+        <h:form id="chartsForm">
+
+            <div class="row">
+
+                <div class="column-small" style="background-color: aliceblue">
+                    <div class="card">
+                        <p:pieChart model="#{chartJsView.pieModelWs}" style="width: 100%; height: 220px;"/>
+                    </div>
+                </div>
+                <div class="column-small" style="background-color: aliceblue">
+                    <div class="card">
+                        <p:pieChart model="#{chartJsView.pieModelQn}" style="width: 100%; height: 220px;"/>
+                    </div>
+                </div>
+                <div class="column-small" style="background-color: aliceblue">
+                    <div class="card">
+                        <p:pieChart model="#{chartJsView.pieModelQs}" style="width: 100%; height: 220px;"/>
+                    </div>
+                </div>
+                <div class="column-small" style="background-color: aliceblue">
+                    <div class="card">
+                        <p:pieChart model="#{chartJsView.pieModelVar}" style="width: 100%; height: 220px;"/>
+                    </div>
+                </div>
+                <p:separator style="width:100%;height:5px"/>
+                <div class="column-large" style="background-color: white">
+                    <div class="card">
+                        <p:barChart model="#{chartJsView.barModel}" style="width: 100%; height: 400px;"/>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+        <p:separator style="width:100%;height:5px"/>
+        <h3 style="text-align: center; background-color: white;">Alers and notifications</h3>
+        <h:form>
+            <div class="card">
+                <p:dataTable var="data" value="#{dashboardController.auditDataList}" showGridlines="true">
+                    <p:column headerText="Id" width="15%">
+                        <h:outputText value="#{data.id}" align="right"/>
+                    </p:column>
+
+                    <p:column headerText="Ip" width="10%">
+                        <h:outputText value="#{data.ip}" />
+                    </p:column>
+
+                    <p:column headerText="Owner" width="10%">
+                        <h:outputText value="#{data.owner}" />
+                    </p:column>
+
+                    <p:column headerText="Type" width="10%">
+                        <h:outputText value="#{data.auditType}" />
+                    </p:column>
+
+                    <p:column headerText="Content">
+                        <h:outputText value="#{data.auditContent}" />
+                    </p:column>
+                </p:dataTable>
+            </div>
+        </h:form>
+    </ui:define>
+
+</ui:composition>
+</html>

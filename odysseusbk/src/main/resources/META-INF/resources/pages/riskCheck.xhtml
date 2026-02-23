@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html   lang="en-us"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Risk Check</h2>
+
+        <h:form>
+            <p:panelGrid columns="6" styleClass="ui-panelgrid-blank ui-fluid"
+                         columnClasses="ui-g-12 ui-md-1,ui-g-12 ui-md-5,ui-g-12 ui-md-1,ui-g-12 ui-md-5"
+                         layout="grid">
+                <p:outputLabel for="notificationcontent" value="Search on: "  styleClass="form-heading-style"/>
+                <p:inputText id="notificationcontent" value="#{odsNotificationController.nameFilter}">
+                    <p:ajax event="blur"  update="notificationcontent"/>
+                </p:inputText>
+                <p:commandButton id="filterButton" icon="pi pi-search" style="width: 150px"
+                                 value="Filter"
+                                 actionListener="#{odsNotificationController.filter()}"
+                                 update="odsNotificationForm"/>
+                <p:commandButton icon="pi pi-search" style="width: 150px;float:right;"
+                                 value="Reset"
+                                 actionListener="#{odsNotificationController.reset()}"
+                                 update="odsNotificationForm notificationcontent" />
+            </p:panelGrid>
+        </h:form>
+
+        <h:form id="odsNotificationForm">
+            <p:growl id="msgs" showDetail="true"/>
+            <p:dataTable id="dataTableOdsNotification" var="notification" value="#{odsNotificationController.odsNotificationList}"
+                         selection="#{odsNotificationController.odsNotificationSelected}"
+                         emptyMessage="No notification found with given criteria"
+                         showGridlines="true"
+                         rows="5" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+
+                <f:facet name="header">
+                    <div class="flex justify-content-between align-items-center">
+                        <p:commandButton  id="toggler" type="button" align="right" value="Columns" icon="pi pi-align-justify"/>
+                        <p:columnToggler datasource="dataTableOdsNotification" trigger="toggler">
+                            <p:ajax />
+                        </p:columnToggler>
+                    </div>
+                </f:facet>
+
+                <p:column headerText="ID" style="width: 50px" sortBy="#{notification.id}" sortOrder="descending">
+                    <h:outputText value="#{notification.id}" />
+                </p:column>
+
+                <p:column headerText="Short Content" sortBy="#{notification.shortContent}">
+                    <h:outputText value="#{notification.shortContent}" />
+                </p:column>
+
+                <p:column headerText="Full Content" sortBy="#{notification.fullContent}">
+                    <h:outputText value="#{notification.fullContent}" />
+                </p:column>
+
+                <p:column headerText="Severity" sortBy="#{notification.severity}">
+                    <h:outputText value="#{notification.severity}" />
+                </p:column>
+
+                <p:column headerText="Creation Date" sortBy="#{notification.creationDate}" visible="false">
+                    <h:outputText value="#{notification.creationDate}" />
+                </p:column>
+
+                <p:column headerText="Created By" sortBy="#{notification.createdBy}" visible="false">
+                    <h:outputText value="#{notification.createdBy}" />
+                </p:column>
+
+                <p:column headerText="Application Name" sortBy="#{notification.applicationName}" visible="false">
+                    <h:outputText value="#{notification.applicationName}" />
+                </p:column>
+
+                <p:column headerText="Expiration Date" sortBy="#{notification.expirationDate}" visible="false">
+                    <h:outputText value="#{notification.expirationDate}" />
+                </p:column>
+
+                <p:column headerText="Notification Status" sortBy="#{notification.notificationStatus}" visible="false">
+                    <h:outputText value="#{notification.notificationStatus}" />
+                </p:column>
+
+                <p:column headerText="Target" sortBy="#{notification.target}" visible="false">
+                    <h:outputText value="#{notification.target}" />
+                </p:column>
+
+                <p:column headerText="Url" sortBy="#{notification.url}" visible="false">
+                    <h:outputText value="#{notification.url}" />
+                </p:column>
+
+                <p:column headerText="Source Mission Id" sortBy="#{notification.sourceMissionId}" visible="false">
+                    <h:outputText value="#{notification.sourceMissionId}" />
+                </p:column>
+
+                <p:column headerText="Task Name" sortBy="#{notification.taskName}" >
+                    <h:outputText value="#{notification.taskName}" />
+                </p:column>
+
+                <p:column headerText="Area Name" sortBy="#{notification.areaName}" >
+                    <h:outputText value="#{notification.areaName}" />
+                </p:column>
+
+                <p:column headerText="Position" sortBy="#{notification.position}">
+                    <h:outputText value="#{notification.position}" />
+                </p:column>
+
+                <p:column headerText="Actions">
+
+                    <p:commandButton icon="pi pi-pencil" update=":dialogsOdsNotification:manage-odsNotification-content" id="editOdsNotification"
+                                     oncomplete="PF('manageOdsNotification').show()"
+                                     styleClass="edit-button rounded-button ui-button-success">
+                        <f:setPropertyActionListener value="#{notification}"
+                                                     target="#{odsNotificationController.odsNotificationSelected}" />
+                    </p:commandButton>
+                    <p:tooltip for="editOdsNotification" value="Edit" showEffect="clip" hideEffect="fold" position="top"/>
+
+                    <p:commandButton class="ui-button-warning rounded-button" id="deleteOdsNotification"
+                                     oncomplete="PF('deleteOdsNotificationDialog').show()"
+                                     icon="pi pi-trash">
+                        <f:setPropertyActionListener value="#{notification}"
+                                                     target="#{odsNotificationController.odsNotificationSelected}" />
+                    </p:commandButton>
+
+                    <p:tooltip for="deleteOdsNotification" value="Delete" showEffect="clip" hideEffect="fold" position="top"/>
+
+                </p:column>
+
+            </p:dataTable>
+
+            <p:toolbar >
+                <p:toolbarGroup>
+                    <p:commandButton value="New Notification" icon="pi pi-plus"
+                                     actionListener="#{odsNotificationController.createNewOdsNotification}"
+                                     update=":dialogsOdsNotification:manage-odsNotification-content"
+                                     oncomplete="PF('manageOdsNotification').show()"
+                                     style="width: 150px;float:right;margin-right: 2.5rem; background-color: #1c7d73;"
+
+                    >
+                        <p:resetInput target=":dialogsOdsNotification:manage-odsNotification-content" />
+                    </p:commandButton>
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
+
+        <h:form id="dialogsOdsNotification">
+            <p:dialog header="Notification" showEffect="fade" widgetVar="manageOdsNotification"
+                      responsive="true">
+                <p:scrollPanel style="width: 400px;height: 400px;" >
+                    <p:outputPanel id="manage-odsNotification-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty odsNotificationController.odsNotificationSelected}">
+                        <div class="field">
+                            <p:outputLabel for="shortContent">Short Content</p:outputLabel>
+                            <p:inputText id="shortContent"
+                                         value="#{odsNotificationController.odsNotificationSelected.shortContent}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="fullContent">Full Content</p:outputLabel>
+                            <p:inputTextarea id="fullContent" rows="3"
+                                         value="#{odsNotificationController.odsNotificationSelected.fullContent}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="severity">Severity</p:outputLabel>
+                            <p:inputNumber id="severity" decimalPlaces="0" converter="javax.faces.Short"
+                                         value="#{odsNotificationController.odsNotificationSelected.severity}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="createdBy">Created By</p:outputLabel>
+                            <p:inputText id="createdBy"
+                                         value="#{odsNotificationController.odsNotificationSelected.createdBy}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="applicationName">Application Name</p:outputLabel>
+                            <p:inputText id="applicationName"
+                                         value="#{odsNotificationController.odsNotificationSelected.applicationName}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="notificationStatus">Notification Status</p:outputLabel>
+                            <p:inputText id="notificationStatus"
+                                         value="#{odsNotificationController.odsNotificationSelected.notificationStatus}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="target">Target</p:outputLabel>
+                            <p:inputText id="target"
+                                         value="#{odsNotificationController.odsNotificationSelected.target}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="url">Url</p:outputLabel>
+                            <p:inputText id="url"
+                                         value="#{odsNotificationController.odsNotificationSelected.url}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="sourceMissionId">Source Mission Id</p:outputLabel>
+                            <p:inputNumber id="sourceMissionId" decimalPlaces="0" converter="javax.faces.Integer"
+                                         value="#{odsNotificationController.odsNotificationSelected.sourceMissionId}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="taskName">Task Name</p:outputLabel>
+                            <p:inputText id="taskName"
+                                         value="#{odsNotificationController.odsNotificationSelected.taskName}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="areaName">Area Name</p:outputLabel>
+                            <p:inputText id="areaName"
+                                         value="#{odsNotificationController.odsNotificationSelected.areaName}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="position">Position</p:outputLabel>
+                            <p:inputText id="position"
+                                         value="#{odsNotificationController.odsNotificationSelected.position}" />
+                        </div>
+
+
+                    </p:outputPanel>
+                </p:outputPanel>
+                </p:scrollPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{odsNotificationController.saveOdsNotification}"
+                                     update="odsNotificationForm:dataTableOdsNotification"
+                                     oncomplete="PF('manageOdsNotification').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageOdsNotification').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formConfirmDialog">
+
+            <p:confirmDialog widgetVar="deleteOdsNotificationDialog" showEffect="fade" width="300"
+                             message="Delete the notification?" header="Confirm" severity="warn" appendTo="@(body)" >
+                <p:commandButton value="Yes" icon="pi pi-check"
+                                 actionListener="#{odsNotificationController.deleteOdsNotification}"
+                                 oncomplete="PF('deleteOdsNotificationDialog').hide()" />
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteOdsNotificationDialog').hide()" />
+            </p:confirmDialog>
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>
+</html>
+

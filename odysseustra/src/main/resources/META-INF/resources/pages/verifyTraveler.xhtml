@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Verify Traveler</h2>
+        <h:form>
+            <div class="card">
+                <div class="card" style="text-align: center;">
+                    <h:form>
+                        <div style="display: flex; flex-direction: column; align-items: center;">
+                            <p:photoCam widgetVar="pc" listener="#{checkIdentityController.oncapture}" width="600" height="400" update="photo"
+                            />
+                            <br/>
+                            <p:commandButton type="button" value="Capture" onclick="PF('pc').capture()"/>
+                        </div>
+                        <p:outputPanel id="photo" style="text-align: center;">
+                            <p:graphicImage name="#{checkIdentityController.filename}" rendered="#{not empty checkIdentityController.filename}"
+                                            style="max-height: 600px; max-width: 800px;"/>
+                        </p:outputPanel>
+                    </h:form>
+                </div>
+                <p:dataTable id="documents" value="#{odsTravelerController.odsDocumentListForTraveler}" var="document" showGridlines="true"
+                            selection="#{odsDocumentController.odsDocumentSelectedForVerify}" >
+                    <f:facet name="header">
+                        <div class="flex justify-content-between align-items-center">
+                            List of Documents
+
+                            <div>
+                                <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                                <p:columnToggler datasource="documents" trigger="toggler">
+                                    <p:ajax />
+                                </p:columnToggler>
+                            </div>
+                        </div>
+                    </f:facet>
+
+                    <p:column headerText="Traveler ID" visible="false">
+                        <h:outputText value="#{document.travelerId}" />
+                    </p:column>
+                    <p:column headerText="Document Type">
+                        <h:outputText value="#{document.documentType}" />
+                    </p:column>
+                    <p:column headerText="Country Code" visible="false">
+                        <h:outputText value="#{document.countryCode}" />
+                    </p:column>
+                    <p:column headerText="Document Number">
+                        <h:outputText value="#{document.docNumber}" />
+                    </p:column>
+                    <p:column headerText="Surname">
+                        <h:outputText value="#{document.surname}" />
+                    </p:column>
+                    <p:column headerText="Given Name">
+                        <h:outputText value="#{document.givenName}" />
+                    </p:column>
+                    <p:column headerText="Citizenship">
+                        <h:outputText value="#{document.citizenship}" />
+                    </p:column>
+                    <p:column headerText="Date of Birth" visible="false">
+                        <h:outputText value="#{document.dateOfBirth}" />
+                    </p:column>
+                    <p:column headerText="Personal ID">
+                        <h:outputText value="#{document.personalId}" />
+                    </p:column>
+                    <p:column headerText="Sex" visible="false">
+                        <h:outputText value="#{document.sex}" />
+                    </p:column>
+                    <p:column headerText="Place of Birth">
+                        <h:outputText value="#{document.placeOfBirth}" />
+                    </p:column>
+                    <p:column headerText="Date of Issuance">
+                        <h:outputText value="#{document.dateOfIssuance}" />
+                    </p:column>
+                    <p:column headerText="Authority">
+                        <h:outputText value="#{document.authority}" />
+                    </p:column>
+                    <p:column headerText="Date of Expiry">
+                        <h:outputText value="#{document.dateOfExpiry}" />
+                    </p:column>
+                    <p:column headerText="Document Full ID" visible="false">
+                        <h:outputText value="#{document.docFullId}" />
+                    </p:column>
+                    <p:column headerText="Height" visible="false">
+                        <h:outputText value="#{document.height}" />
+                    </p:column>
+                    <p:column headerText="Color of Eyes" visible="false">
+                        <h:outputText value="#{document.colorOfEyes}" />
+                    </p:column>
+                    <p:column headerText="Residence" visible="false">
+                        <h:outputText value="#{document.residence}" />
+                    </p:column>
+                    <p:column headerText="Picture">
+                        <p:commandButton value="Show" actionListener="#{odsTravelerController.settingImageFromDB(document.id)}" update="imageForm"
+                                         oncomplete="PF('documentPicture').show()"/>
+                    </p:column>
+
+                    <p:column headerText="Actions">
+                        <p:commandButton value="Verify"
+                        >
+                            <f:setPropertyActionListener value="#{document}"
+                                                         target="#{odsDocumentController.odsDocumentSelectedForVerify}" />
+                            <f:actionListener binding="#{odsDocumentController.verifyDocument()}" />
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+            </div>
+        </h:form>
+
+        <h:form id="imageForm">
+            <p:dialog id="documentPicture" header="Document Picture" widgetVar="documentPicture" responsive="true" showEffect="fade">
+                <p:outputPanel id="manage-documentPicture-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty odsTravelerController.imageFromDB}">
+                        <p:graphicImage
+                                cache="false"
+                                value="#{odsTravelerController.picture}"
+                                style="max-width: 150px; max-height: 300px; " />
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('documentPicture').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+
+
+        </h:form>
+    </ui:define>
+
+
+</ui:composition>
+</html>

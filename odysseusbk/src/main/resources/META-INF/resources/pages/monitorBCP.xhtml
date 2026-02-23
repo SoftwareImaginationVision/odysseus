@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html   lang="en-us"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Monitor BCP</h2>
+
+        <h:form>
+            <p:panelGrid columns="6" styleClass="ui-panelgrid-blank ui-fluid"
+                         columnClasses="ui-g-12 ui-md-1,ui-g-12 ui-md-5,ui-g-12 ui-md-1,ui-g-12 ui-md-5"
+                         layout="grid">
+                <p:outputLabel for="eventcontent" value="Search on: "  styleClass="form-heading-style"/>
+                <p:inputText id="eventcontent" value="#{odsEventController.nameFilter}">
+                    <p:ajax event="blur"  update="eventcontent"/>
+                </p:inputText>
+                <p:commandButton id="filterButton" icon="pi pi-search" style="width: 150px"
+                                 value="Filter"
+                                 actionListener="#{odsEventController.filter()}"
+                                 update="odsEventForm"/>
+                <p:commandButton icon="pi pi-search" style="width: 150px;float:right;"
+                                 value="Reset"
+                                 actionListener="#{odsEventController.reset()}"
+                                 update="odsEventForm eventcontent" />
+            </p:panelGrid>
+        </h:form>
+
+        <h:form id="odsEventForm">
+            <p:growl id="msgs" showDetail="true"/>
+            <p:dataTable id="dataTableOdsEvent" var="odsEvent" value="#{odsEventController.odsEventsList}"
+                         selection="#{odsEventController.odsEventSelected}"
+                         emptyMessage="No events found with given criteria"
+                         showGridlines="true"
+                         sortBy="#{odsEvent.id}"
+                         sortOrder="descending"
+                         rows="5" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+
+                <f:facet name="header">
+                    <div class="flex justify-content-between align-items-center">
+                            <p:commandButton  id="toggler" type="button" align="right" value="Columns" icon="pi pi-align-justify"/>
+                            <p:columnToggler datasource="dataTableOdsEvent" trigger="toggler">
+                                <p:ajax />
+                            </p:columnToggler>
+                    </div>
+                </f:facet>
+
+                <p:column headerText="ID" sortBy="#{odsEvent.id}" sortOrder="descending">
+                    <h:outputText value="#{odsEvent.id}" />
+                </p:column>
+
+                <p:column headerText="End Date" sortBy="#{odsEvent.endDate}" visible="false">
+                    <h:outputText value="#{odsEvent.endDate}" />
+                </p:column>
+
+                <p:column headerText="Event" sortBy="#{odsEvent.event}">
+                    <h:outputText value="#{odsEvent.event}" />
+                </p:column>
+
+                <p:column headerText="Start Date" sortBy="#{odsEvent.startDate}" visible="false">
+                    <h:outputText value="#{odsEvent.startDate}" />
+                </p:column>
+
+                <p:column headerText="Status" sortBy="#{odsEvent.status}">
+                    <h:outputText value="#{odsEvent.status}" />
+                </p:column>
+
+                <p:column headerText="Latitude" sortBy="#{odsEvent.latitude}" >
+                    <h:outputText value="#{odsEvent.latitude}" />
+                </p:column>
+
+                <p:column headerText="Longitude" sortBy="#{odsEvent.longitude}" >
+                    <h:outputText value="#{odsEvent.longitude}" />
+                </p:column>
+
+                <p:column headerText="Detected Target" sortBy="#{odsEvent.detectedTarget}" visible="false">
+                    <h:outputText value="#{odsEvent.detectedTarget}" />
+                </p:column>
+
+                <p:column headerText="Specific Area" sortBy="#{odsEvent.specificArea}" visible="false">
+                    <h:outputText value="#{odsEvent.specificArea}" />
+                </p:column>
+
+                <p:column headerText="Direction" sortBy="#{odsEvent.direction}" visible="false">
+                    <h:outputText value="#{odsEvent.direction}" />
+                </p:column>
+
+                <p:column headerText="Approaching Target" sortBy="#{odsEvent.approachingTarget}" visible="false">
+                    <h:outputText value="#{odsEvent.approachingTarget}" />
+                </p:column>
+
+                <p:column headerText="Event Source" sortBy="#{odsEvent.eventSource}">
+                    <h:outputText value="#{odsEvent.eventSource}" />
+                </p:column>
+
+                <p:column headerText="Speed" sortBy="#{odsEvent.speed}" visible="false">
+                    <h:outputText value="#{odsEvent.speed}" />
+                </p:column>
+
+                <p:column headerText="Event Type" sortBy="#{odsEvent.eventType}">
+                    <h:outputText value="#{odsEvent.eventType}" />
+                </p:column>
+
+                <p:column headerText="Severity" sortBy="#{odsEvent.severity}">
+                    <h:outputText value="#{odsEvent.severity}" />
+                </p:column>
+
+                <p:column headerText="Sequence" sortBy="#{odsEvent.sequence}" visible="false">
+                    <h:outputText value="#{odsEvent.sequence}" />
+                </p:column>
+
+                <p:column headerText="Criticality" sortBy="#{odsEvent.criticality}" visible="false">
+                    <h:outputText value="#{odsEvent.criticality}" />
+                </p:column>
+
+                <p:column headerText="Actions">
+
+                    <p:commandButton icon="pi pi-pencil" update=":dialogsOdsEvent:manage-odsEvent-content" id="editOdsEvent"
+                                     oncomplete="PF('manageOdsEvent').show()"
+                                     styleClass="edit-button rounded-button ui-button-success">
+                        <f:setPropertyActionListener value="#{odsEvent}"
+                                                     target="#{odsEventController.odsEventSelected}" />
+                    </p:commandButton>
+                    <p:tooltip for="editOdsEvent" value="Edit" showEffect="clip" hideEffect="fold" position="top"/>
+
+                    <p:commandButton class="ui-button-warning rounded-button" id="deleteOdsEvent"
+                                     oncomplete="PF('deleteOdsEventDialog').show()"
+                                     icon="pi pi-trash">
+                        <f:setPropertyActionListener value="#{odsEvent}"
+                                                     target="#{odsEventController.odsEventSelected}" />
+                    </p:commandButton>
+
+                    <p:tooltip for="deleteOdsEvent" value="Delete" showEffect="clip" hideEffect="fold" position="top"/>
+
+                </p:column>
+
+            </p:dataTable>
+
+            <p:toolbar >
+                <p:toolbarGroup>
+                    <p:commandButton value="New Event" icon="pi pi-plus"
+                                     actionListener="#{odsEventController.createNewOdsEvent}"
+                                     update=":dialogsOdsEvent:manage-odsEvent-content"
+                                     oncomplete="PF('manageOdsEvent').show()"
+                                     style="width: 150px;float:right;margin-right: 2.5rem;background-color: #1c7d73;"
+
+                    >
+                        <p:resetInput target=":dialogsOdsEvent:manage-odsEvent-content" />
+                    </p:commandButton>
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
+
+        <h:form id="dialogsOdsEvent">
+            <p:dialog header="Event" showEffect="fade" widgetVar="manageOdsEvent"
+                      responsive="true">
+                <p:scrollPanel style="width: 400px;height: 400px;" >
+                <p:outputPanel id="manage-odsEvent-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty odsEventController.odsEventSelected}">
+                        <div class="field">
+                            <p:outputLabel for="odsEvent">Event</p:outputLabel>
+                            <p:inputText id="odsEvent"
+                                         value="#{odsEventController.odsEventSelected.event}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="status">Status</p:outputLabel>
+                            <p:inputText id="status"
+                                         value="#{odsEventController.odsEventSelected.status}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="latitude">Latitude</p:outputLabel>
+                            <p:inputText id="latitude"
+                                         value="#{odsEventController.odsEventSelected.latitude}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="longitude">Longitude</p:outputLabel>
+                            <p:inputText id="longitude"
+                                         value="#{odsEventController.odsEventSelected.longitude}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="detectedTarget">Detected Target</p:outputLabel>
+                            <p:inputText id="detectedTarget"
+                                         value="#{odsEventController.odsEventSelected.detectedTarget}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="specificArea">Specific Area</p:outputLabel>
+                            <p:inputText id="specificArea"
+                                         value="#{odsEventController.odsEventSelected.specificArea}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="direction">Direction</p:outputLabel>
+                            <p:inputText id="direction"
+                                         value="#{odsEventController.odsEventSelected.direction}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="approachingTarget">Approaching Target</p:outputLabel>
+                            <p:inputText id="approachingTarget"
+                                         value="#{odsEventController.odsEventSelected.approachingTarget}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="eventSource">Event Source</p:outputLabel>
+                            <p:inputText id="eventSource"
+                                         value="#{odsEventController.odsEventSelected.eventSource}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="speed">Speed</p:outputLabel>
+                            <p:inputText id="speed"
+                                         value="#{odsEventController.odsEventSelected.speed}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="eventType">Event Type</p:outputLabel>
+                            <p:inputText id="eventType"
+                                         value="#{odsEventController.odsEventSelected.eventType}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="severity">Severity</p:outputLabel>
+                            <p:inputNumber id="severity" decimalPlaces="0" converter="javax.faces.Integer"
+                                         value="#{odsEventController.odsEventSelected.severity}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="sequence">Sequence</p:outputLabel>
+                            <p:inputNumber id="sequence" decimalPlaces="0" converter="javax.faces.Integer"
+                                         value="#{odsEventController.odsEventSelected.sequence}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="criticality">Criticality</p:outputLabel>
+                            <p:inputText id="criticality"
+                                         value="#{odsEventController.odsEventSelected.criticality}"/>
+                        </div>
+
+                    </p:outputPanel>
+                </p:outputPanel>
+                </p:scrollPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{odsEventController.saveOdsEvent}"
+                                     update="odsEventForm:dataTableOdsEvent"
+                                     oncomplete="PF('manageOdsEvent').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageOdsEvent').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formConfirmDialog">
+
+            <p:confirmDialog widgetVar="deleteOdsEventDialog" showEffect="fade" width="300"
+                             message="Delete the event?" header="Confirm" severity="warn" appendTo="@(body)" >
+                <p:commandButton value="Yes" icon="pi pi-check"
+                                 actionListener="#{odsEventController.deleteOdsEvent}"
+                                 oncomplete="PF('deleteOdsEventDialog').hide()" />
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteOdsEventDialog').hide()" />
+            </p:confirmDialog>
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>
+</html>
+

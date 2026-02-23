@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Documents</h2>
+        <h:form id="odsDocumentForm">
+            <p:dataTable id="dataTableOdsDocument" var="document" value="#{odsDocumentController.documentList}"
+                         selection="#{odsDocumentController.odsDocumentSelected}"
+                         emptyMessage="No travel found with given criteria"
+                         showGridlines="true"
+                         rows="5" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+                <f:facet name="header">
+                <div class="flex justify-content-between align-items-center">
+                    List of Documents
+
+                    <div>
+                        <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                        <p:columnToggler datasource="dataTableOdsDocument" trigger="toggler">
+                            <p:ajax />
+                        </p:columnToggler>
+                    </div>
+                </div>
+                </f:facet>
+
+            <p:column headerText="ID" sortBy="#{document.id}" sortOrder="ascending" width ="35">
+                <h:outputText value="#{document.id}" />
+            </p:column>
+
+
+            <p:column headerText="Document Type" sortBy="#{document.documentType}"  width ="75">
+                <h:outputText value="#{document.documentType}" />
+            </p:column>
+
+            <p:column headerText="Country Code" sortBy="#{document.countryCode}"  width ="50" visible="false">
+                <h:outputText value="#{document.countryCode}" />
+            </p:column>
+
+            <p:column headerText="Document Number" sortBy="#{document.docNumber}" width ="75">
+                <h:outputText value="#{document.docNumber}" />
+            </p:column>
+
+            <p:column headerText="Surname" width ="75">
+                <h:outputText value="#{document.surname}" />
+            </p:column>
+
+            <p:column headerText="Given Name"  width ="75">
+                <h:outputText value="#{document.givenName}" />
+            </p:column>
+
+            <p:column headerText="Citizenship"  width ="75">
+                <h:outputText value="#{document.citizenship}" />
+            </p:column>
+
+            <p:column headerText="Date of birth" width ="75">
+                <h:outputText value="#{document.dateOfBirth}" />
+            </p:column>
+
+            <p:column headerText="Personal Id" width ="100">
+                <h:outputText value="#{document.personalId}" />
+            </p:column>
+
+            <p:column headerText="Sex" width ="50">
+                <h:outputText value="#{document.sex}" />
+            </p:column>
+
+            <p:column headerText="Place of birth" width ="75" visible="false">
+                <h:outputText value="#{document.placeOfBirth}" />
+            </p:column>
+
+            <p:column headerText="Date of issuance" width ="75">
+                <h:outputText value="#{document.dateOfIssuance}" />
+            </p:column>
+
+            <p:column headerText="Authority" width ="75" visible="false">
+                <h:outputText value="#{document.authority}" />
+            </p:column>
+
+            <p:column headerText="Date of Expiry" width ="75">
+                <h:outputText value="#{document.dateOfExpiry}" />
+            </p:column>
+
+            <p:column headerText="Document full Id" width ="125">
+                <h:outputText value="#{document.docFullId}" />
+            </p:column>
+
+            <p:column headerText="Height" width ="50" visible="false">
+                <h:outputText value="#{document.height}" />
+            </p:column>
+
+            <p:column headerText="Color of Eyes" width ="50" visible="false">
+                <h:outputText value="#{document.colorOfEyes}" />
+            </p:column>
+
+            <p:column headerText="Residence" width ="75" visible="false">
+                <h:outputText value="#{document.residence}" />
+            </p:column>
+
+            <p:column headerText="Picture" width="75">
+                <p:commandButton value="Show" actionListener="#{odsDocumentController.settingDocument(document.id)}" update="imageForm"
+                                     oncomplete="PF('documentPicture').show()"/>
+            </p:column>
+            <p:column headerText="Actions" width = "75">
+
+                <p:commandButton icon="pi pi-pencil" update=":dialogsOdsDocument:manage-odsDocument-content" id="editOdsDocument"
+                                     oncomplete="PF('manageOdsDocument').show()"
+                                     styleClass="edit-button rounded-button ui-button-success">
+                    <f:setPropertyActionListener value="#{document}"
+                                                     target="#{odsDocumentController.odsDocumentSelected}" />
+                </p:commandButton>
+                <p:tooltip for="editOdsDocument" value="Edit" showEffect="clip" hideEffect="fold" position="top"/>
+
+                <p:commandButton class="ui-button-warning rounded-button" id="deleteOdsDocument"
+                                     oncomplete="PF('deleteOdsDocumentDialog').show()"
+                                     icon="pi pi-trash">
+                    <f:setPropertyActionListener value="#{document}"
+                                                     target="#{odsDocumentController.odsDocumentSelected}" />
+                    </p:commandButton>
+
+                <p:tooltip for="deleteOdsDocument" value="Delete" showEffect="clip" hideEffect="fold" position="top"/>
+
+            </p:column>
+            </p:dataTable>
+
+            <p:toolbar >
+                <p:toolbarGroup>
+                    <p:commandButton value="New Document" icon="pi pi-plus"
+                                     actionListener="#{odsDocumentController.createNewOdsDocument}"
+                                     update=":dialogsOdsDocument:manage-odsDocument-content"
+                                     oncomplete="PF('manageOdsDocument').show()"
+                                     style="width: 150px;float:right;margin-right: 2.5rem; background-color: #1c7d73;"
+
+                    >
+                        <p:resetInput target=":dialogsOdsDocument:manage-odsDocument-content" />
+                    </p:commandButton>
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
+        <h:form id ="imageForm">
+            <p:dialog i="documentPicture" header="Document Picture" widgetVar="documentPicture" responsive="true" showEffect="fade">
+                <p:outputLabel id="manage-documentPicture-content" class = "ui-fluid">
+                    <p:outputLabel rendered="#{not empty odsDocumentController.imageFromDB}">
+                        <p:graphicImage
+                                cache="false"
+                                value="#{odsDocumentController.imageDB}"
+                                style="max-width:724px; max-height: 724px;"/>
+                    </p:outputLabel>
+                </p:outputLabel>
+                <f:facet name="footer">
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('documentPicture').hide()"
+                                     class = "ui-button-secondary" type = "button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="dialogsOdsDocument">
+            <p:dialog header="Document" showEffect="fade" widgetVar="manageOdsDocument" responsive="true">
+                <p:outputPanel id="manage-odsDocument-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty odsDocumentController.odsDocumentSelected}">
+                        <div style=" max-height: 460px; max-width: 750px; overflow-y: auto; padding: 10px;">
+                            <table style="width: 100%; border-collapse: collapse; border: 10px solid #ddd; transform: scale(0.9);">
+                                <tr>
+                                    <td style="padding: 15px 10px">
+                                        <div class="card" style="width: 400px">
+
+                                            <p:growl id="messages" showDetail="true"/>
+
+                                            <h3 style="font-weight: normal; font-size: 16px;">Picture</h3>
+
+                                            <p:fileUpload mode="advanced"
+                                                          multiple="false"
+                                                          listener="#{odsDocumentController.handleFileUpload}"
+                                                          sizeLimit="512400" allowTypes="/(\.|\/)(gif|jpe?g|png)$/"
+                                                          invalidSizeMessage="Maximum file size allowed is 500 KB"
+                                                          invalidFileMessage="only gif | jpg | jpeg | png is allowed"
+                                                          update="messages imagePanel"/>
+
+
+
+                                            <p:outputPanel id="imagePanel" style="border: 1px solid #ddd; padding: 10px;">
+                                                <h3 style="font-weight: normal; font-size: 16px;">Picture uploaded</h3>
+                                                <p:graphicImage
+                                                        cache="false"
+                                                        rendered="#{not empty odsDocumentController.originalImage}"
+                                                        value="#{odsDocumentController.image}"
+                                                        style="max-width: 150px; max-height: 300px; " />
+                                            </p:outputPanel>
+
+                                        </div>
+                                    </td>
+
+                                </tr>
+                            </table>
+
+                            <table style="width: 100%; border-collapse: collapse; border: 10px solid #ddd; transform: scale(0.9); margin-top: -50px">
+
+
+                                <tr>
+                                    <td style="padding: 15px 10px">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="docNumber">Document number</p:outputLabel>
+                                            <p:inputText id="docNumber"
+                                                         value="#{odsDocumentController.odsDocumentSelected.docNumber}" />
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="docFullId">Document full Id</p:outputLabel>
+                                            <p:inputText id="docFullId"
+                                                         value="#{odsDocumentController.odsDocumentSelected.docFullId}"  />
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 125px ">
+                                            <p:outputLabel for="documentType">Document Type</p:outputLabel>
+                                            <p:inputText id="documentType"
+                                                         value="#{odsDocumentController.odsDocumentSelected.documentType}"  />
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 125px">
+                                            <p:outputLabel for="countryCode">Country code</p:outputLabel>
+                                            <p:inputText id="countryCode"
+                                                         value="#{odsDocumentController.odsDocumentSelected.countryCode}" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px ">
+                                            <p:outputLabel for="surname">Surname</p:outputLabel>
+                                            <p:inputText id="surname"
+                                                         value="#{odsDocumentController.odsDocumentSelected.surname}"  />
+
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="givenName">Given name</p:outputLabel>
+                                            <p:inputText id="givenName"
+                                                         value="#{odsDocumentController.odsDocumentSelected.givenName}" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="citizenship">Citizenship</p:outputLabel>
+                                            <p:inputText id="citizenship"
+                                                         value="#{odsDocumentController.odsDocumentSelected.citizenship}" />
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="residence">Residence</p:outputLabel>
+                                            <p:inputText id="residence"
+                                                         value="#{odsDocumentController.odsDocumentSelected.residence}"  />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="dateOfBirth">Date of Birth</p:outputLabel>
+                                            <p:inputText id="dateOfBirth"
+                                                         value="#{odsDocumentController.odsDocumentSelected.dateOfBirth}"/>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="personalId">Personal Id</p:outputLabel>
+                                            <p:inputText id="personalId"
+                                                         value="#{odsDocumentController.odsDocumentSelected.personalId}"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 125px" >
+                                            <p:outputLabel for="Sex">Sex</p:outputLabel>
+                                            <p:inputText id="Sex"
+                                                         value="#{odsDocumentController.odsDocumentSelected.sex}"/>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="placeOfBirth">Place of birth</p:outputLabel>
+                                            <p:inputText id="placeOfBirth"
+                                                         value="#{odsDocumentController.odsDocumentSelected.placeOfBirth}"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="dateOfInssuance">Date of inssuance</p:outputLabel>
+                                            <p:inputText id="dateOfInssuance"
+                                                         value="#{odsDocumentController.odsDocumentSelected.dateOfIssuance}"/>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="dateOfExpiry">Date of expiry</p:outputLabel>
+                                            <p:inputText id="dateOfExpiry"
+                                                         value="#{odsDocumentController.odsDocumentSelected.dateOfExpiry}"/>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 250px">
+                                            <p:outputLabel for="Authority">Authority</p:outputLabel>
+                                            <p:inputText id="Authority"
+                                                         value="#{odsDocumentController.odsDocumentSelected.authority}" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 125px">
+                                            <p:outputLabel for="height">Height</p:outputLabel>
+                                            <p:inputText id="height"
+                                                         value="#{odsDocumentController.odsDocumentSelected.height}"/>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 125px">
+                                            <p:outputLabel for="colorOfEyes">Color of eyes</p:outputLabel>
+                                            <p:inputText id="colorOfEyes"
+                                                         value="#{odsDocumentController.odsDocumentSelected.colorOfEyes}"/>
+                                        </div>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+                        </div>
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{odsDocumentController.saveOdsDocument}"
+                                     update="odsDocumentForm:dataTableOdsDocument"
+                                     oncomplete="PF('manageOdsDocument').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times"
+                                     actionListener="#{odsDocumentController.cancelOdsDocument}"
+                                     oncomplete="PF('manageOdsDocument').hide()"
+                                     class="ui-button-secondary" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+        <h:form id="formConfirmDialog">
+
+        <p:confirmDialog widgetVar="deleteOdsDocumentDialog" showEffect="fade" width="300"
+                         message="Delete this document?" header="Confirm" severity="warn" appendTo="@(body)" >
+            <p:commandButton value="Yes" icon="pi pi-check"
+                             actionListener="#{odsDocumentController.deleteOdsDocument}"
+                             oncomplete="PF('deleteOdsDocumentDialog').hide()" />
+            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                             onclick="PF('deleteOdsDocumentDialog').hide()" />
+        </p:confirmDialog>
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>
+</html>

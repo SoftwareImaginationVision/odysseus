@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Verify VDP</h2>
+        <h:form id="odsTravelerForm">
+            <p:growl id="msgs" showDetail="true"/>
+            <p:dataTable id="dataTableOdsTraveler" var="traveler" value="#{odsTravelerController.travelerList}"
+                         selection="#{odsTravelerController.odsTravelerSelected}"
+                         emptyMessage="No travelers found with given criteria"
+                         showGridlines="true"
+                         rows="5" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+                <f:facet name="header">
+                    <div class="flex justify-content-between align-items-center">
+                        List of Travelers
+
+                        <div>
+                            <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                            <p:columnToggler datasource="dataTableOdsTraveler" trigger="toggler">
+                                <p:ajax />
+                            </p:columnToggler>
+                        </div>
+                    </div>
+                </f:facet>
+
+                <p:column headerText="ID" sortBy="#{traveler.id}"  width ="55">
+                    <h:outputText value="#{traveler.id}" />
+                </p:column>
+
+                <p:column headerText="First Name" sortBy="#{traveler.firstName}" width ="55">
+                    <h:outputText value="#{traveler.firstName}" />
+                </p:column>
+
+                <p:column headerText="Last Name" sortBy="#{traveler.lastName}" width ="55">
+                    <h:outputText value="#{traveler.lastName}" />
+                </p:column>
+
+                <p:column headerText="Date of birth" sortBy="#{traveler.dateOfBirth}"  width ="95">
+                    <h:outputText value="#{traveler.dateOfBirth}" />
+                </p:column>
+
+                <p:column headerText="Place of birth" width ="75" visible="false">
+                    <h:outputText value="#{traveler.placeOfBirth}" />
+                </p:column>
+
+                <p:column headerText="Street" width ="125" visible="false">
+                    <h:outputText value="#{traveler.street}" />
+                </p:column>
+
+                <p:column headerText="Street details" width ="125" visible="false">
+                    <h:outputText value="#{traveler.streetDetails}" />
+                </p:column>
+
+                <p:column headerText="City" width ="75">
+                    <h:outputText value="#{traveler.city}" />
+                </p:column>
+
+                <p:column headerText="County" width ="75" visible="false">
+                    <h:outputText value="#{traveler.county}" />
+                </p:column>
+
+                <p:column headerText="Country code" width ="75">
+                    <h:outputText value="#{traveler.countryCode}" />
+                </p:column>
+
+                <p:column headerText="Zip code" width ="75" visible="false">
+                    <h:outputText value="#{traveler.zipCode}" />
+                </p:column>
+
+                <p:column headerText="Phone" width ="125">
+                    <h:outputText value="#{traveler.phone}" />
+                </p:column>
+
+                <p:column headerText="Social media" width ="75" visible="false">
+                    <h:outputText value="#{traveler.socialMedia}" />
+                </p:column>
+
+                <p:column headerText="Additional info" width ="125">
+                    <h:outputText value="#{traveler.additionalInfo}" />
+                </p:column>
+
+                <p:column headerText="Document type" width ="85">
+                    <h:outputText value="#{traveler.documentType}" />
+                </p:column>
+
+                <p:column headerText="Document number" width ="125">
+                    <h:outputText value="#{traveler.documentNumber}" />
+                </p:column>
+
+                <p:column headerText="Document issuer" width ="125" visible="false">
+                    <h:outputText value="#{traveler.documentIssuer}" />
+                </p:column>
+
+                <p:column headerText="Document validity" width ="75">
+                    <h:outputText value="#{traveler.documentValidity}" />
+                </p:column>
+
+                <p:column headerText="Personal id" width ="75">
+                    <h:outputText value="#{traveler.personalId}" />
+                </p:column>
+
+                <p:column headerText="UUID" width ="75">
+                    <h:outputText value="#{traveler.tuuid}" />
+                </p:column>
+
+                <p:column headerText="Picture" width="75">
+                    <p:commandButton value="Show" update="imageForm"
+                                     oncomplete="PF('documentPicture').show()">
+                        <f:setPropertyActionListener value="#{traveler}"
+                                                     target="#{odsTravelerController.odsTravelerSelected}" />
+                        <f:actionListener binding="#{odsTravelerController.settingPictureFromTraveler()}" />
+                    </p:commandButton>
+                </p:column>
+
+
+                <p:column headerText="Actions" width = "75">
+                    <p:commandButton value="Verify" style="width: 80px; height: 40px; font-size: 14px;">
+                        <f:setPropertyActionListener value="#{traveler}"
+                                                     target="#{odsTravelerController.odsTravelerSelected}" />
+                        <f:actionListener binding="#{odsTravelerController.settingOdsDocument()}" />
+                    </p:commandButton>
+
+
+                    <p:commandButton icon="pi pi-pencil" update=":dialogsOdsTraveler:manage-odsTraveler-content" id="editOdsTraveler"
+                                     oncomplete="PF('manageOdsTraveler').show()"
+                                     styleClass="edit-button rounded-button ui-button-success">
+                        <f:setPropertyActionListener value="#{traveler}"
+                                                     target="#{odsTravelerController.odsTravelerSelected}" />
+                    </p:commandButton>
+                    <p:tooltip for="editOdsTraveler" value="Edit" showEffect="clip" hideEffect="fold" position="top"/>
+
+                    <p:commandButton class="ui-button-warning rounded-button" id="deleteOdsTraveler"
+                                     oncomplete="PF('deleteOdsTravelerDialog').show()"
+                                     icon="pi pi-trash">
+                        <f:setPropertyActionListener value="#{traveler}"
+                                                     target="#{odsTravelerController.odsTravelerSelected}" />
+                    </p:commandButton>
+
+                    <p:tooltip for="deleteOdsTraveler" value="Delete" showEffect="clip" hideEffect="fold" position="top"/>
+
+                </p:column>
+
+            </p:dataTable>
+            <p:toolbar >
+                <p:toolbarGroup>
+                    <p:commandButton value="New Traveler" icon="pi pi-plus"
+                                     actionListener="#{odsTravelerController.createNewOdsTraveler()}"
+                                     update=":dialogsOdsTraveler:manage-odsTraveler-content"
+                                     oncomplete="PF('manageOdsTraveler').show()"
+                                     style="width: 150px;float:right;margin-right: 2.5rem; background-color: #1c7d73;">
+                        <p:resetInput target=":dialogsOdsTraveler:manage-odsTraveler-content" />
+                    </p:commandButton>
+                </p:toolbarGroup>
+            </p:toolbar>
+
+        </h:form>
+        <h:form id="dialogsOdsTraveler">
+            <p:dialog header="Traveler" showEffect="fade" widgetVar="manageOdsTraveler" responsive="true">
+                <p:outputPanel id="manage-odsTraveler-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty odsTravelerController.odsTravelerSelected}">
+                        <div style=" max-height: 460px; max-width: 750px; overflow-y: auto; padding: 10px;">
+
+                            <table style="width: 100%; border-collapse: collapse; border: 10px solid #ddd; transform: scale(0.9); margin-top: -50px">
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px ">
+                                            <p:outputLabel for="personalId">Personal id</p:outputLabel>
+                                            <p:inputText id="personalId"
+                                                         value="#{odsTravelerController.odsTravelerSelected.personalId}"
+                                            />
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px ">
+                                            <p:outputLabel for="firstName">First name</p:outputLabel>
+                                            <p:inputText id="firstName"
+                                                         value="#{odsTravelerController.odsTravelerSelected.firstName}"
+                                            />
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px ">
+                                            <p:outputLabel for="lastName">Last name</p:outputLabel>
+                                            <p:inputText id="lastName"
+                                                         value="#{odsTravelerController.odsTravelerSelected.lastName}"
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px ">
+                                            <p:outputLabel for="dateOfBirth">Date of birth</p:outputLabel>
+                                            <p:inputText id="dateOfBirth"
+                                                         value="#{odsTravelerController.odsTravelerSelected.dateOfBirth}"  />
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="placeOfBirth">Place of birth</p:outputLabel>
+                                            <p:inputText id="placeOfBirth"
+                                                         value="#{odsTravelerController.odsTravelerSelected.placeOfBirth}" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px ">
+                                            <p:outputLabel for="street">Street</p:outputLabel>
+                                            <p:inputText id="street"
+                                                         value="#{odsTravelerController.odsTravelerSelected.street}"  />
+
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="streetDetails">Street details</p:outputLabel>
+                                            <p:inputText id="streetDetails"
+                                                         value="#{odsTravelerController.odsTravelerSelected.streetDetails}" />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="city">City</p:outputLabel>
+                                            <p:inputText id="city"
+                                                         value="#{odsTravelerController.odsTravelerSelected.city}" />
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="county">County</p:outputLabel>
+                                            <p:inputText id="county"
+                                                         value="#{odsTravelerController.odsTravelerSelected.county}"  />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 145px">
+                                            <p:outputLabel for="countryCode">Country code</p:outputLabel>
+                                            <p:inputText id="countryCode"
+                                                         value="#{odsTravelerController.odsTravelerSelected.countryCode}"/>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="zipCode">Zip Code</p:outputLabel>
+                                            <p:inputText id="zipCode"
+                                                         value="#{odsTravelerController.odsTravelerSelected.zipCode}"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px" >
+                                            <p:outputLabel for="email">Email</p:outputLabel>
+                                            <p:inputText id="email"
+                                                         value="#{odsTravelerController.odsTravelerSelected.email}"/>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="phone">Phone</p:outputLabel>
+                                            <p:inputText id="phone"
+                                                         value="#{odsTravelerController.odsTravelerSelected.phone}"/>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="socialMedia">Social media</p:outputLabel>
+                                            <p:inputText id="socialMedia"
+                                                         value="#{odsTravelerController.odsTravelerSelected.socialMedia}"/>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="aditionalInfo">Aditional info</p:outputLabel>
+                                            <p:inputText id="aditionalInfo"
+                                                         value="#{odsTravelerController.odsTravelerSelected.additionalInfo}"/>
+                                        </div>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="documentType">Document Type</p:outputLabel>
+                                            <p:inputText id="documentType"
+                                                         value="#{odsTravelerController.odsTravelerSelected.documentType}" />
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px ">
+                                            <p:outputLabel for="documentNumber">Document number</p:outputLabel>
+                                            <p:inputText id="documentNumber"
+                                                         value="#{odsTravelerController.odsTravelerSelected.documentNumber}"
+                                            />
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="documentIssuer">Document Issuer</p:outputLabel>
+                                            <p:inputText id="documentIssuer"
+                                                         value="#{odsTravelerController.odsTravelerSelected.documentIssuer}"/>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 15px 10px;">
+                                        <div class="field" style="padding-top: 10px; width: 225px">
+                                            <p:outputLabel for="documentValidity">Document validity</p:outputLabel>
+                                            <p:inputText id="documentValidity"
+                                                         value="#{odsTravelerController.odsTravelerSelected.documentValidity}"/>
+                                        </div>
+                                    </td>
+
+                                </tr>
+
+                            </table>
+                        </div>
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{odsTravelerController.saveOdsTraveler()}"
+                                     update="odsTravelerForm:dataTableOdsTraveler"
+                                     oncomplete="PF('manageOdsTraveler').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageOdsTraveler').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="imageForm">
+            <p:dialog id="documentPicture" header="Document Picture" widgetVar="documentPicture" responsive="true" showEffect="fade">
+                <p:outputPanel id="manage-documentPicture-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty odsTravelerController.pictureFromTravaler}">
+                        <p:graphicImage
+                                cache="false"
+                                value="#{odsTravelerController.image}"
+                                style="max-width: 150px; max-height: 300px; " />
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('documentPicture').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+
+
+        </h:form>
+
+
+        <h:form id="formConfirmDialog">
+
+            <p:confirmDialog widgetVar="deleteOdsTravelerDialog" showEffect="fade" width="300"
+                             message="Delete this traveler?" header="Confirm" severity="warn" appendTo="@(body)" >
+                <p:commandButton value="Yes" icon="pi pi-check"
+                                 actionListener="#{odsTravelerController.deleteOdsTraveler}"
+                                 oncomplete="PF('deleteOdsTravelerDialog').hide()" />
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteOdsTravelerDialog').hide()" />
+            </p:confirmDialog>
+
+        </h:form>
+
+    </ui:define>
+</ui:composition>
+</html>
+

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h1 style="text-align: center;">Charts</h1>
+        <h:form id="chartsId">
+
+        <div class="row">
+
+            <div class="column-small" style="background-color: lightcyan">
+                <div class="card">
+                    <p:pieChart model="#{chartJsView.pieModel1}" style="width: 100%; height: 220px;"/>
+                </div>
+            </div>
+            <div class="column-small" style="background-color: lightcyan">
+                <div class="card">
+                    <p:pieChart model="#{chartJsView.pieModel2}" style="width: 100%; height: 220px;"/>
+                </div>
+            </div>
+            <p:separator style="width:100%;height:5px"/>
+            <div class="column-large" style="background-color: lightcyan">
+                <div class="card">
+                    <p:barChart model="#{chartJsView.barModelA}" style="width: 100%; height: 220px;"/>
+                </div>
+            </div>
+            <div class="column-large" style="background-color: lightcyan">
+                <div class="card">
+                    <p:barChart model="#{chartJsView.barModelI}" style="width: 100%; height: 220px;"/>
+                </div>
+            </div>
+
+        </div>
+        </h:form>
+
+    </ui:define>
+</ui:composition>
+</html>

@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-us"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+<h:head>
+    <title>Odysseus</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <h:outputStylesheet library="css" name="jsfcrud.css"/>
+</h:head>
+
+<h:body>
+    <pe:layout fullPage="true" widgetVar="layoutVar">
+        <pe:layoutPane  id="north-pnl" position="north" styleClassContent="north-pnl" size="50" closable="false"  collapsible="true" resizable="true" collapseSize="0" gutter="1">
+            <!--    <div class="card">-->
+            <h:form id="templateForm1">
+                <p:growl>
+                    <p:autoUpdate/>
+                </p:growl>
+                <div class="header">
+                    <h:form id="templateForm2">
+                        <p:growl id="messages" showDetail="true"/>
+
+                        <p:toolbar style="height: 53px;background-color: #04048f">
+                            <p:toolbarGroup style="position: relative;bottom: 10px">
+                                <!--                                <p:graphicImage name="images/ODYSSEUS_LOGO_LINE.png"/>-->
+                                <p:link id="idNormandie" outcome="/index.xhtml" target="_blank">
+                                    <p:graphicImage name="images/ODYSSEUS_LOGO_LINE.png"
+                                                    width="240"
+                                                    height="32">
+                                    </p:graphicImage>
+                                </p:link>
+                            </p:toolbarGroup>
+<!--                            <p:toolbarGroup align="center" style="position: relative;bottom: 10px">-->
+<!--&lt;!&ndash;                                <h:outputText id="wsh" style="color: #f4d58d" value="Workspace - "/>&ndash;&gt;-->
+<!--                   -->
+<!--                            </p:toolbarGroup>-->
+
+                            <p:toolbarGroup align="right" style="position: relative;bottom: 10px">
+                                <p:commandButton id="dynaButton" value="Menu" type="button" icon="pi pi-bars" styleClass="ui-button-info"/>
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                    </h:form>
+                </div>
+            </h:form>
+            <!--    </div>-->
+        </pe:layoutPane>
+
+        <pe:layoutPane id="center-pnl" position="center" styleClassContent="center-pnl" closable="false" resizable="true" >
+            <ui:insert name="content-center"/>
+        </pe:layoutPane>
+
+        <pe:layoutPane id="west-pnl" position="west" styleClassContent="west-pnl" size="243px"  closable="false" >
+            <h:form id="formMenu">
+                <p:slideMenu  overlay="true" trigger="templateForm1:templateForm2:dynaButton"  my="left top" at="left bottom"  >
+                    <p:menuitem style="font-weight: bold;"
+                                value="Home" id="home"
+                                icon="fa fa-star"
+                                rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                outcome="/index.xhtml"
+                    />
+                    <p:menuitem style="font-weight: bold;"
+                                value="Dashboard" id="dashboard"
+                                icon="fa fa-star"
+                                rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                outcome="/pages/dashboard.xhtml"
+                    />
+
+                    <p:submenu label="Monitoring" rendered="#{dashboardController.isRendered('DashboardAll')}" style="display: flex;" >
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Passengers" id="passengers"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/passengers.xhtml"
+                        />
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Equipments" id="equipments"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/equipments.xhtml"
+                        />
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Cars" id="cars"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/cars.xhtml"
+                        />
+
+                    </p:submenu>
+
+                    <p:submenu label="BCP Officers" rendered="#{dashboardController.isRendered('DashboardAll')}">
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Monitor BCP" id="monitorBCP"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/monitorBCP.xhtml"
+                        />
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Check Identity" id="checkIdentityBCP"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/checkIdentityForBCP.xhtml"
+                        />
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Verify VDP" id="verifyVDPforBCP"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/verifyVDPforBCP.xhtml"
+                        />
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Risk Check" id="riskCheck"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/riskCheck.xhtml"
+                        />
+
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Verify Status" id="verifyStatusForBCP"
+                                    icon="fa fa-star"
+                                    actionListener="#{workflowManagementController.resetModelForBCP()}"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                        />
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Car Scans" id="carScans"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/carScans.xhtml"
+                        />
+
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Border Point" id="borderPoint"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/borderPoint.xhtml"
+                        />
+
+                    </p:submenu>
+
+                    <p:submenu label="Administrators" rendered="#{dashboardController.isRendered('DashboardAll')}">
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Workflow Management" id="workflowManagement"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/workflowManagement.xhtml"
+                        />
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Equipment Management" id="equipmentManagement"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/equipmentManagement.xhtml"
+                        />
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Command and Control" id="commandAndControl"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/commandAndControl.xhtml"
+                        />
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Risk Profiles" id="riskProfiles"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/riskProfiles.xhtml"
+                        />
+
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Rule Management" id="ruleManagement"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/ruleManagement.xhtml"
+                        />
+
+                    </p:submenu>
+                    <p:submenu label="Situational summary" rendered="#{dashboardController.isRendered('DashboardAll')}">
+
+                        <p:menuitem style="font-weight: bold;display: flex;"
+                                    value="Charts" id="charts"
+                                    icon="fa fa-star"
+                                    rendered="#{dashboardController.isRendered('DashboardAll')}"
+                                    outcome="/pages/charts.xhtml"
+                        />
+
+                    </p:submenu>
+
+
+                </p:slideMenu>
+            </h:form>
+
+        </pe:layoutPane>
+
+
+        <pe:layoutPane id="south-pnl" position="south" size="45" closable="false" resizable="false">
+            <div class="footer">
+                <p:row>
+                    <p:column style="width: 25%; text-align: left;">
+                        <p:graphicImage name="images/EN-Funded-by-the-EU-POS.png"
+                                        width="240"
+                                        height="44"
+                                        style="float:left;"
+                        >
+                        </p:graphicImage>
+                    </p:column>
+                    <p:column style="width: 75%; text-align: left">
+                        ODYSSEUS-BK
+                        <h:outputText id="build-info" value="#{applicationBuildInfo.getVersion()} - #{applicationBuildInfo.getNumber()} - #{applicationBuildInfo.getTime()} | "/>
+                        <h:outputLink styleClass="home-link" value="/odysseus/index.xhtml"><i class="pi pi-home"></i><span style="margin-left: 0.3%">Home</span></h:outputLink>
+                    </p:column>
+                </p:row>
+            </div>
+        </pe:layoutPane>
+    </pe:layout>
+</h:body>
+</html>

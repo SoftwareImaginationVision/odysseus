@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html   lang="en-us"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="../template.xhtml">
+    <ui:define name="content-center">
+
+        <h2 style="text-align: center;">Create Workflow</h2>
+
+        <h:form  id="form" >
+            <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+
+            <h:outputLabel  value="To see the #{workflowManagementController.odsWorkflowSelected.workflowName} workflow, click on the button    " rendered="#{!workflowManagementController.showButton()}"  style="margin-left: 5px"/>
+            <p:commandButton value="Show Workflow" actionListener="#{workflowManagementController.createDiagram()}" update="diagram odsWorkFlowNodeData"
+                             widgetVar="showButton" rendered="#{!workflowManagementController.showButton()}"
+                             onclick="PF('showButton').disable()" >
+            </p:commandButton>
+
+
+
+            <p:splitter  styleClass="mb-5" style="background-color: white;">
+                <p:splitterPanel  styleClass="flex align-items-center justify-content-center" style="width: 25%!important;">
+
+                    <p:panelGrid columns="8" layout="grid">
+                        <p:outputLabel for="nodecontent" value="Search on: " styleClass="form-heading-style"/>
+                        <p:inputText id="nodecontent" styleClass="form-control" value="#{workflowManagementController.nameFilterForWorkflowNode}">
+                            <p:ajax event="blur" update="nodecontent"/>
+                        </p:inputText>
+
+                        <p:commandButton icon="pi pi-search" styleClass="btn btn-primary" value="Filter"
+                                         actionListener="#{workflowManagementController.filterOdsWorkflowNode()}"
+                                         update="odsWorkFlowNodeData"/>
+
+                        <p:commandButton icon="pi pi-search" styleClass="btn btn-secondary" value="Reset"
+                                         actionListener="#{workflowManagementController.resetOdsWorkflowNode()}"
+                                         update="odsWorkFlowNodeData nodecontent"/>
+                    </p:panelGrid>
+
+
+                    <p:dataTable id="odsWorkFlowNodeData" widgetVar="odsWorkflowNodesList" var="node"
+                                 value="#{workflowManagementController.odsWorkflowNodesList}"
+                                 selection="#{workflowManagementController.odsWorkflowNodeSelected}"
+                                 allowUnsorting="true"
+                                 emptyMessage="No node found with given criteria"
+                                 showGridlines="true"  rowKey="#{node.id}" rowSelectMode="add"
+                                 style="table-layout: fixed;word-wrap: break-word;"
+                                 rows="10" paginator="true" paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="10,15,25,50,100,{ShowAll|'All'}">
+                        <f:facet name="header">
+                            <div class="flex justify-content-between align-items-center">
+                                <div>
+                                    <p:commandButton id="toggler" type="button" align="right" value="Columns" icon="pi pi-align-justify"/>
+                                    <p:columnToggler datasource="odsWorkFlowNodeData" trigger="toggler" >
+                                        <p:ajax />
+                                    </p:columnToggler>
+
+                                    <p:commandButton value="New Node" icon="pi pi-plus"
+                                                     actionListener="#{workflowManagementController.createNewOdsWorkflowNode}"
+                                                     update=":dialogsOdsWorkflowNode:manage-odsWorkflowNode-content"
+                                                     oncomplete="PF('manageOdsWorkflowNode').show()"
+                                                     style="width: 150px;float:right;margin-right: 2.5rem"
+                                                     styleClass="ui-button-success" >
+                                        <p:resetInput target=":dialogsOdsWorkflowNode:manage-odsWorkflowNode-content" />
+                                    </p:commandButton>
+
+
+                                </div>
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="Id"  sortBy="#{node.id}" sortOrder="descending" visible="false">
+                            <h:outputText value="#{node.id}" align="right"/>
+                        </p:column>
+
+                        <p:column headerText="Node Name" sortBy="#{node.nodeName}">
+                            <h:outputText id="nodeName" value="#{node.nodeName}" />
+                            <p:tooltip for="nodeName" value="#{node.nodeText.substring(0,(node.nodeText.length() > 60) ? 60 : node.nodeText.length())}" showEffect="clip" hideEffect="fold" position="top"/>
+                        </p:column>
+
+
+                        <p:column headerText="Drule Id"  sortBy="#{node.druleId}" visible="false">
+                            <h:outputText value="#{node.druleId}" />
+                        </p:column>
+
+                        <p:column headerText="Drule Parameters"  sortBy="#{node.druleParameters}" visible="false">
+                            <h:outputText value="#{node.druleParameters}" />
+                        </p:column>
+
+                        <p:column headerText="Created On"  sortBy="#{node.createdOn}" visible="false">
+                            <h:outputText value="#{node.createdOn}" />
+                        </p:column>
+
+                        <p:column headerText="Node Text"  sortBy="#{node.nodeText}" visible="false">
+                            <h:outputText value="#{node.nodeText}" />
+                        </p:column>
+
+                        <p:column headerText="Workflow Id"  sortBy="#{node.workflowId}" visible="false">
+                            <h:outputText value="#{node.workflowId}" />
+                        </p:column>
+
+                        <p:column headerText="Drule Name"  sortBy="#{node.druleName}" visible="false">
+                            <h:outputText value="#{node.druleName}" />
+                        </p:column>
+
+                        <p:column headerText="Node type"  sortBy="#{node.nodeType}">
+                            <h:outputText value="#{node.nodeType}" />
+                        </p:column>
+
+                        <p:column headerText="Actions" width="80px">
+
+                            <p:commandButton icon="pi pi-pencil" update=":dialogsOdsWorkflowNode:manage-odsWorkflowNode-content" id="editOdsWorkflowNode"
+                                             oncomplete="PF('manageOdsWorkflowNode').show()"
+                                             styleClass="edit-button rounded-button ui-button-success">
+                                <f:setPropertyActionListener value="#{node}"
+                                                             target="#{workflowManagementController.odsWorkflowNodeSelected}" />
+                            </p:commandButton>
+                            <p:tooltip for="editOdsWorkflowNode" value="Edit" showEffect="clip" hideEffect="fold" position="top"/>
+
+                            <p:commandButton class="ui-button-warning rounded-button" id="deleteOdsWorkflowNode"
+                                             oncomplete="PF('deleteOdsWorkflowNodeDialog').show()"
+                                             icon="pi pi-trash">
+                                <f:setPropertyActionListener value="#{node}"
+                                                             target="#{workflowManagementController.odsWorkflowNodeSelected}" />
+                            </p:commandButton>
+
+                            <p:tooltip for="deleteOdsWorkflowNode" value="Delete" showEffect="clip" hideEffect="fold" position="top"/>
+
+                        </p:column>
+
+                        <p:column style="width:10px!important;">
+                            <h:outputText id="dragIcon" styleClass="ui-icon pi pi-plus"/>
+                            <p:draggable for="dragIcon" revert="true" helper="clone"/>
+                        </p:column>
+
+                    </p:dataTable>
+                </p:splitterPanel>
+                <p:splitterPanel styleClass="flex align-items-center justify-content-center" style="width:75%!important;" >
+                    <p:fieldset id="selectedNodes" style="margin-top:5px">
+                        <p:outputPanel id="dropArea">
+                            <h:outputText value="Drag the + sign to add node in workflow and drope here."
+                                          style="font-size:1rem"/>
+
+                            <style type="text/css">
+
+                                .flow-label {
+                                    font-size: 16px;
+                                    font-weight: bold;
+                                    color: red;
+                                }
+                                .ui-diagram-element {
+
+                                    height: 80px;
+                                    text-align: center;
+                                    background-color: transparent;
+                                    border: none;
+                                    box-shadow: none;
+                                    width: 140px;
+
+                                }
+
+                                .ui-diagram-element:hover {
+                                    background-color: #C7C6C4;
+                                }
+                                .node-container {
+                                    display: flex;
+                                    flex-direction: column;
+                                    align-items: center;
+                                    position: relative;
+                                }
+                                .ui-diagram-element_special_case {
+                                    height: 155px;
+                                    text-align: center;
+                                    background-color: transparent;
+                                    border: none;
+                                    box-shadow: none;
+                                    width: 140px;
+                                }
+                                .ui-diagram-element_special_case_2 {
+                                    height: 155px;
+                                    text-align: center;
+                                    background-color: transparent;
+                                    border: none;
+                                    box-shadow: none;
+                                    width: 140px;
+                                }
+                                .ui-diagram-element_special_case .node-name {
+                                    top: 10%;
+                                }
+
+                                .node-name {
+                                    margin-top: 10px;
+                                    color: black;
+                                    font-weight: bold;
+                                    text-align: center;
+                                    font-size: 13px;
+                                    white-space: normal;
+                                    word-wrap: break-word;
+                                    overflow-wrap: break-word;
+                                    line-height: 1;
+                                    max-width: 90px;
+                                }
+
+                                .rectangle-with-lines {
+                                    width: 140px;
+                                    height: 70px;
+                                    background-color: lightgray;
+                                    position: absolute;
+                                    border: 1px solid black;
+                                }
+
+                                .rectangle-with-lines::before,
+                                .rectangle-with-lines::after {
+                                    content: '';
+                                    position: absolute;
+                                    width: 2px;
+                                    top:0;
+                                    height: 100%;
+                                    background-color: black;
+                                }
+
+                                .rectangle-with-lines::before {
+                                    left: 15px;
+                                }
+
+                                .rectangle-with-lines::after {
+                                    right: 15px;
+                                }
+                                .rectangle-cut-corner {
+                                    width: 90px;
+                                    height: 120px;
+                                    background-color: lightblue;
+                                    position: relative;
+                                    clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 20%);
+                                    border: 1px solid black;
+                                }
+                           
+
+                            </style>
+
+                            <div class="card">
+
+                                <p:diagram id="diagram" var="diag" value="#{workflowManagementController.model}" rendered="#{not empty workflowManagementController.model}" style="height:800px;!important; width: 800px;!important;"  styleClass="ui-widget-content">
+                                    <f:facet name="element">
+                                        <div class="node-container">
+                                            <h:outputText value="#{diag.nodeName}" styleClass="node-name"/>
+                                            <p:graphicImage name="images/#{diag.nodeType}.png" />
+                                        </div>
+
+                                    </f:facet>
+                                    <p:ajax event="connect" listener="#{workflowManagementController.onConnect}" />
+                                    <p:ajax event="disconnect" listener="#{workflowManagementController.onDisconnect}"/>
+                                </p:diagram>
+
+
+                                <p:remoteCommand name="elementClicked" actionListener="#{workflowManagementController.elementSelectedForWorkflow()}"/>
+                                <script type="text/javascript">
+                                    var isElementClicked = false;
+
+                                    $(document).on('dblclick', '.ui-diagram > .ui-diagram-element', function(info){
+                                        if (!isElementClicked) {
+                                            isElementClicked = true;
+
+                                            var elementId = $(this).attr('id');
+                                            elementClicked([{
+                                                name : 'elementId',
+                                                value : elementId
+                                            }]);
+
+                                            setTimeout(function() {
+                                                isElementClicked = false;
+                                            }, 300);
+                                        }
+                                    });
+                                </script>
+
+                            </div>
+
+                        </p:outputPanel>
+                    </p:fieldset>
+                </p:splitterPanel>
+            </p:splitter>
+
+            <p:droppable for="selectedNodes" widgetVar="dropV" tolerance="touch" activeStyleClass="ui-state-highlight"
+                         datasource="odsWorkFlowNodeData" onDrop="handleDrop">
+
+                <p:ajax listener="#{workflowManagementController.onProductDrop}" update="odsWorkFlowNodeData, dropArea, diagram" />
+                <p:remoteCommand name="sendCoordinates" actionListener="#{workflowManagementController.receiveCoordinates}" process="@this"/>
+            </p:droppable>
+            <script type="text/javascript">
+                function handleDrop(event, ui) {
+                    var mouseX = event.pageX;
+                    var mouseY = event.pageY;
+
+                    // Get the container (the area where you're dropping elements)
+                    var container = document.getElementById('form:diagram'); // or the ID of your container
+                    var containerRect = container.getBoundingClientRect();
+
+                    // Adjust the coordinates relative to the container
+                    var adjustedX = Math.floor(mouseX - containerRect.left);
+                    var adjustedY = Math.floor(mouseY - containerRect.top);
+
+                    // Log for testing purposes
+                    console.log("Adjusted Drop Position - X: " + adjustedX + ", Y: " + adjustedY);
+
+                    // Send the adjusted coordinates to the backend
+                    sendCoordinates([{ name: 'mouseX', value: adjustedX }, { name: 'mouseY', value: adjustedY }]);
+                }
+            </script>
+        </h:form>
+
+
+
+        <h:form id="dialogsOdsWorkflowNode">
+            <p:dialog header="Workflow Node" showEffect="fade" widgetVar="manageOdsWorkflowNode"
+                      responsive="true">
+                <p:outputPanel id="manage-odsWorkflowNode-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty workflowManagementController.odsWorkflowNodeSelected}">
+                        <div class="field">
+                            <p:outputLabel for="workflowNodeName">Node Name</p:outputLabel>
+                            <p:inputText id="workflowNodeName"
+                                         value="#{workflowManagementController.odsWorkflowNodeSelected.nodeName}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="nodeText">Node Text</p:outputLabel>
+                            <p:inputTextarea id="nodeText" rows="5"
+                                           value="#{workflowManagementController.odsWorkflowNodeSelected.nodeText}" />
+                        </div>
+                        <p:outputLabel for="node_Type">Node Type</p:outputLabel>
+                        <p:selectOneMenu id="node_Type"
+                                         value="#{workflowManagementController.odsWorkflowNodeSelected.nodeType}"
+                                         filter="true" filterMatchMode="contains" filterNormalize = "true">
+                            <f:selectItem itemLabel="Data Storage" itemValue="Data Storage"> </f:selectItem>
+                            <f:selectItem itemLabel="Decision" itemValue="Decision"> </f:selectItem>
+                            <f:selectItem itemLabel="End" itemValue="End"> </f:selectItem>
+                            <f:selectItem itemLabel="Start" itemValue="Start"> </f:selectItem>
+                            <f:selectItem itemLabel="Fork" itemValue="Fork"> </f:selectItem>
+                            <f:selectItem itemLabel="Incoming Event" itemValue="Incoming Event"> </f:selectItem>
+                            <f:selectItem itemLabel="Join" itemValue="Join"> </f:selectItem>
+                            <f:selectItem itemLabel="Merge" itemValue="Merge"> </f:selectItem>
+                            <f:selectItem itemLabel="Outgoing Event" itemValue="Outgoing Event"> </f:selectItem>
+                            <f:selectItem itemLabel="Time" itemValue="Time"> </f:selectItem>
+                            <f:selectItem itemLabel="Process" itemValue="Process"> </f:selectItem>
+                            <f:selectItem itemLabel="Card" itemValue="Card"> </f:selectItem>
+                        </p:selectOneMenu>
+
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{workflowManagementController.saveOdsWorkflowNode}"
+                                     update="form"
+                                     oncomplete="PF('manageOdsWorkflowNode').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageOdsWorkflowNode').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formConfirmDialog">
+
+            <p:confirmDialog widgetVar="deleteOdsWorkflowNodeDialog" showEffect="fade" width="300"
+                             message="Delete the workflow node?" header="Confirm" severity="warn" appendTo="@(body)" >
+                <p:commandButton value="Yes" icon="pi pi-check"
+                                 actionListener="#{workflowManagementController.deleteOdsWorkflowNode}"
+                                 oncomplete="PF('deleteOdsWorkflowNodeDialog').hide()" />
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteOdsWorkflowNodeDialog').hide()" />
+            </p:confirmDialog>
+
+        </h:form>
+
+        <h:form id="dialogsOdsWorkflowLink">
+            <p:dialog header="Workflow Link" showEffect="fade" widgetVar="manageOdsWorkflowLink"
+                      responsive="true">
+                <p:outputPanel id="manage-odsWorkflowLink-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty workflowManagementController.odsWorkflowLinkSelected}">
+                        <div class="field">
+                            <p:outputLabel for="linkName">Link Name</p:outputLabel>
+                            <p:inputText id="linkName"
+                                         value="#{workflowManagementController.odsWorkflowLinkSelected.linkName}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="linkText">Link Text</p:outputLabel>
+                            <p:inputTextarea id="linkText" rows="3"
+                                             value="#{workflowManagementController.odsWorkflowLinkSelected.linkText}" />
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="sourceNode">Source Node</p:outputLabel>
+                            <p:inputText  type="hidden"
+                                         value="#{workflowManagementController.odsWorkflowLinkSelected.sourceNode}" />
+                            <p:inputText id="sourceNode" readonly="true" value="#{workflowManagementController.getNodeName(workflowManagementController.odsWorkflowLinkSelected.sourceNode)}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="destNode">Destination Node</p:outputLabel>
+                            <p:inputText  type="hidden"
+                                         value="#{workflowManagementController.odsWorkflowLinkSelected.destNode}" />
+                            <p:inputText id="destNode" readonly="true" value="#{workflowManagementController.getNodeName(workflowManagementController.odsWorkflowLinkSelected.destNode)}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="logicalOperator">Logical Operator</p:outputLabel>
+                            <p:inputText id="logicalOperator"
+                                         value="#{workflowManagementController.odsWorkflowLinkSelected.logicalOperator}" />
+                        </div>
+
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{workflowManagementController.saveOdsWorkflowLink}"
+                                     oncomplete="PF('manageOdsWorkflowLink').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageOdsWorkflowLink').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="elementDetailsWF">
+            <p:dialog id="dialogElementDetailsWF" header="Node Details" widgetVar="dialogElementDetailsWF" responsive="true" showEffect="fade">
+                <p:outputPanel id="manage-elementWF-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty workflowManagementController.selectedNode}">
+                        <div class="field">
+                            <p:outputLabel for="name">Node Name</p:outputLabel>
+                            <p:inputText id="name" value="#{workflowManagementController.selectedNode.nodeName}"/>
+                        </div>
+                        <p:outputLabel for="nodetype">Node Type</p:outputLabel>
+                        <p:selectOneMenu id="nodetype"
+                                         value="#{workflowManagementController.selectedNode.nodeType}"
+                                         filter="true" filterMatchMode="contains" filterNormalize = "true">
+                            <f:selectItem itemLabel="Data Storage" itemValue="Data Storage"> </f:selectItem>
+                            <f:selectItem itemLabel="Decision" itemValue="Decision"> </f:selectItem>
+                            <f:selectItem itemLabel="End" itemValue="End"> </f:selectItem>
+                            <f:selectItem itemLabel="Start" itemValue="Start"> </f:selectItem>
+                            <f:selectItem itemLabel="Fork" itemValue="Fork"> </f:selectItem>
+                            <f:selectItem itemLabel="Incoming Event" itemValue="Incoming Event"> </f:selectItem>
+                            <f:selectItem itemLabel="Join" itemValue="Join"> </f:selectItem>
+                            <f:selectItem itemLabel="Merge" itemValue="Merge"> </f:selectItem>
+                            <f:selectItem itemLabel="Outgoing Event" itemValue="Outgoing Event"> </f:selectItem>
+                            <f:selectItem itemLabel="Time" itemValue="Time"> </f:selectItem>
+                            <f:selectItem itemLabel="Process" itemValue="Process"> </f:selectItem>
+                            <f:selectItem itemLabel="Card" itemValue="Card"> </f:selectItem>
+                        </p:selectOneMenu>
+                        <div class="field">
+                            <p:outputLabel for="druleName">Drule Name</p:outputLabel>
+                            <p:inputText id="druleName" value="#{workflowManagementController.selectedNode.druleName}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="druleId">Drule ID</p:outputLabel>
+                            <p:inputText id="druleId" value="#{workflowManagementController.selectedNode.druleId}"/>
+                        </div>
+
+                        <div class="field">
+                            <p:outputLabel for="druleParameters">Drule Parameters</p:outputLabel>
+                            <p:inputTextarea id="druleParameters" value="#{workflowManagementController.selectedNode.druleParameters}"/>
+                        </div>
+
+                    </p:outputPanel>
+                </p:outputPanel>
+
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{workflowManagementController.editOdsWorkflowNodeSelected()}"
+                                     update="form"
+                                     oncomplete="PF('dialogElementDetailsWF').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('dialogElementDetailsWF').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+</html>
+

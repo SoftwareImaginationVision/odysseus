@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Timelines</h2>
+        <h:form id="form">
+            <div class="card">
+                <p:timeline id="timeline" value="#{customTimelineView.model}"
+                            editable="true" eventMargin="10" eventMarginAxis="0"
+                            start="#{customTimelineView.start}" end="#{customTimelineView.end}"
+                            stackEvents="false" widgetVar="timelineWdgt">
+                    <f:facet name="menu">
+                        <p:commandButton type="button" icon="pi pi-chevron-left" styleClass="ml-2" onclick="PF('timelineWdgt').move(-0.3);" />
+                        <p:commandButton type="button" icon="pi pi-chevron-right" styleClass="ml-2" onclick="PF('timelineWdgt').move(0.3);" />
+                        <p:commandButton type="button" icon="pi pi-search-minus" styleClass="ml-2" onclick="PF('timelineWdgt').zoom(-0.5);" />
+                        <p:commandButton type="button" icon="pi pi-search-plus" styleClass="ml-2" onclick="PF('timelineWdgt').zoom(0.5);" />
+                    </f:facet>
+
+                    <f:facet name="loading">
+                        <h1>Loading please wait...</h1>
+                    </f:facet>
+                </p:timeline>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>
+</html>

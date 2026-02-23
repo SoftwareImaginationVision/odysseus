@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang="en-us"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:pe="http://primefaces.org/ui/extensions" >
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Passengers</h2>
+
+        <p:poll interval="5" listener="#{uavController.handleAlert}" update="alertsForm:alertsTable odsUserForm:badgeWrapper" />
+
+        <h:form id="alertsForm">
+            <!-- Pop-up Dialog -->
+            <p:dialog id="alertsDialog" header="Alerts" widgetVar="alertsDialog" responsive="true" showEffect="fade"
+                      closable="true">
+                <p:outputPanel id="manage-alertsDialog-content" class="ui-fluid">
+                <!-- Data Table -->
+                <p:dataTable id="alertsTable" value="#{uavController.alerts}" var="alert" paginator="true" showGridlines="true"
+                             rows="5" responsiveLayout="scroll" paginatorPosition="bottom" style="width: 1000px">
+
+                    <!-- Table Columns -->
+                    <p:column headerText="First Name">
+                        <h:outputText value="#{alert.firstname}" />
+                    </p:column>
+
+                    <p:column headerText="Last Name">
+                        <h:outputText value="#{alert.lastname}" />
+                    </p:column>
+
+                    <p:column headerText="Transaction UUID">
+                        <h:outputText value="#{alert.transactionUuid}" />
+                    </p:column>
+
+                    <p:column headerText="Status" style="width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        <h:outputText value="#{alert.transactionStatus}" />
+                    </p:column>
+
+                    <p:column headerText="Date">
+                        <h:outputText value="#{alert.dateTimeCreated}" />
+                    </p:column>
+
+                    <p:column headerText="Action">
+                        <p:commandButton rendered="#{alert.transactionUuid != null}"
+                                         icon="pi pi-eye"
+                                         styleClass="p-button-rounded p-button-primary"
+                                         actionListener="#{uavController.findTransactionsByUuid(alert)}"
+                                         oncomplete="PF('alertsDialog').hide()">
+                        </p:commandButton>
+                    </p:column>
+
+                </p:dataTable>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Clear Alerts" actionListener="#{uavController.clearAlerts}"
+                                     class="ui-button-primary"  />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('alertsDialog').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="odsUserForm">
+            <!-- Button with Badge -->
+            <p:outputPanel id="badgeWrapper">
+            <p:badge id="badgeAlert" icon="pi pi-bell" severity="danger" value="#{uavController.alertCount}">
+                <p:commandButton id="alertButton" value="Alerts"
+                                 icon="pi pi-bell"
+                                 update="alertsForm"
+                                 styleClass="p-button-rounded p-button-outlined p-button-danger"
+                                 oncomplete="PF('alertsDialog').show()">
+                </p:commandButton>
+            </p:badge>
+            </p:outputPanel>
+            <p:growl id="msgs" showDetail="true"/>
+                <p:dataTable id="dataTableOdsTransactions" var="transactions" value="#{uavController.transactionList}"
+                             emptyMessage="No passengers found with given criteria"
+                             showGridlines="true"
+                             rows="15" paginator="true" paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+                    <f:facet name="header">
+                        <div class="flex justify-content-between align-items-center">
+                            List of Passengers
+
+                            <p:commandButton value="Reset List"
+                                             styleClass="p-button-rounded p-button-secondary flex justify-content-between align-items-center"
+                                             actionListener="#{uavController.resetPassengersPage}">
+                            </p:commandButton>
+                        </div>
+
+                    </f:facet>
+
+                    <p:column headerText="ID" sortBy="#{transactions.id}" >
+                        <h:outputText value="#{transactions.id}" />
+                    </p:column>
+
+                    <p:column headerText="Transaction UUID">
+                        <h:outputText value="#{transactions.transactionUuid}" />
+                    </p:column>
+
+                    <p:column headerText="Transaction Status">
+                        <h:outputText value="#{transactions.transactionStatus}" />
+                    </p:column>
+
+
+                    <p:column headerText="Person Decision">
+                        <h:outputText value="#{transactions.personDecision}" />
+                    </p:column>
+
+                    <p:column headerText="Traveler">
+                        <p:commandButton value="View Details" rendered="#{transactions.travelerId != null}"
+                                         icon="pi pi-eye"
+                                         styleClass="p-button-rounded p-button-secondary"
+                                         oncomplete="PF('manageTravelerDetails').show()"
+                                         actionListener="#{uavController.loadTravelerDetails(transactions.travelerId)}">
+                        </p:commandButton>
+                    </p:column>
+
+                    <p:column headerText="Travel">
+                        <p:commandButton value="View Details" rendered="#{transactions.travelId != null}"
+                                         icon="pi pi-eye"
+                                         styleClass="p-button-rounded p-button-secondary"
+                                         oncomplete="PF('manageTravelDetails').show()"
+                                         actionListener="#{uavController.loadTravelDetails(transactions.travelId)}">
+                        </p:commandButton>
+                    </p:column>
+
+
+                </p:dataTable>
+
+
+        </h:form>
+
+
+        <h:form id="dialogTravelDetails">
+            <p:dialog header="Travel Details" showEffect="fade" widgetVar="manageTravelDetails"
+                      responsive="true">
+                <p:outputPanel id="manage-TravelDetails-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty uavController.selectedTravel}">
+                        <div class="ui-grid ui-fluid" style="max-height: 460px; max-width: 750px; overflow-y: auto; padding: 10px;">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="travelName">Travel Name</p:outputLabel>
+                                    <p:inputText id="travelName" value="#{uavController.selectedTravel.travelName}" readonly="true"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="description">Description</p:outputLabel>
+                                    <p:inputText id="description" value="#{uavController.selectedTravel.description}" readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="travelStatus">Travel Status</p:outputLabel>
+                                    <p:inputText id="travelStatus" value="#{uavController.selectedTravel.travelStatus}" readonly="true"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="endDate">End Date</p:outputLabel>
+                                    <p:inputText id="endDate" value="#{uavController.selectedTravel.endDate}" readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="bcpPlanned">Bcp Planned</p:outputLabel>
+                                    <p:inputText id="bcpPlanned" value="#{uavController.selectedTravel.bcpPlanned}" readonly="true" />
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="passingDatePlanned">Passing Date Planned</p:outputLabel>
+                                    <p:inputText id="passingDatePlanned" value="#{uavController.selectedTravel.passingDatePlanned}" readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="meansOfTransportType">Means of Transport Type</p:outputLabel>
+                                    <p:inputText id="meansOfTransportType" value="#{uavController.selectedTravel.meansOfTransportType}" readonly="true"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="meansOfTransportTypeIden">Means of Transport Type Identification</p:outputLabel>
+                                    <p:inputText id="meansOfTransportTypeIden" value="#{uavController.selectedTravel.meansOfTransportIdentification}" readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="documentNumber">Document Number</p:outputLabel>
+                                    <p:inputText id="documentNumber" value="#{uavController.selectedTravel.documentNumber}" readonly="true"/>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageTravelDetails').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="dialogTravelerDetails">
+            <p:dialog header="Traveler Details" showEffect="fade" widgetVar="manageTravelerDetails"
+                      responsive="true" >
+
+                <p:outputPanel id="manage-TravelerDetails-content" class="ui-fluid" style="height: 500px!important;">
+                    <div style="text-align: center; margin-bottom: 15px;">
+                        <p:graphicImage value="#{uavController.travelerImage}" style="max-width: 150px; max-height: 150px;" cache="false"
+                                        alt="Traveler Photo"/>
+                    </div>
+
+                    <p:outputPanel rendered="#{not empty uavController.selectedTraveler}">
+                        <div class="ui-grid ui-fluid" style="max-height: 460px; max-width: 750px; overflow-y: auto; padding: 10px;">
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="firstname">Firstname</p:outputLabel>
+                                    <p:inputText id="firstname" value="#{uavController.selectedTraveler.firstName}" readonly="true"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="lastname">Lastname</p:outputLabel>
+                                    <p:inputText id="lastname" value="#{uavController.selectedTraveler.lastName}" readonly="true"/>
+                                </div>
+                            </div>
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="dateOfBirth">Date of Birth</p:outputLabel>
+                                    <p:inputText id="dateOfBirth" value="#{uavController.selectedTraveler.dateOfBirth}" readonly="true"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="placeOfBirth">Place of Birth</p:outputLabel>
+                                    <p:inputText id="placeOfBirth" value="#{uavController.selectedTraveler.placeOfBirth}" readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="street">Street</p:outputLabel>
+                                    <p:inputText id="street" value="#{uavController.selectedTraveler.street}" readonly="true" />
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="city">City</p:outputLabel>
+                                    <p:inputText id="city" value="#{uavController.selectedTraveler.city}" readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="country">Country</p:outputLabel>
+                                    <p:inputText id="country" value="#{uavController.selectedTraveler.county}" readonly="true"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="countryCode">Country Code</p:outputLabel>
+                                    <p:inputText id="countryCode" value="#{uavController.selectedTraveler.countryCode}" readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="zipCode">Zip Code</p:outputLabel>
+                                    <p:inputText id="zipCode" value="#{uavController.selectedTraveler.zipCode}" readonly="true"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="email">Email</p:outputLabel>
+                                    <p:inputText id="email" value="#{uavController.selectedTraveler.email}" readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="documentType">Document Type</p:outputLabel>
+                                    <p:inputText id="documentType" value="#{uavController.selectedTraveler.documentType}" readonly="true"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="documentNumberTraveler">Document Number</p:outputLabel>
+                                    <p:inputText id="documentNumberTraveler" value="#{uavController.selectedTraveler.documentNumber}" readonly="true"/>
+                                </div>
+                            </div>
+
+                            <div class="ui-grid-row">
+                                <div class="ui-grid-col-6" style="padding-right: 15px;">
+                                    <p:outputLabel for="documentIssuer">Document Issuer</p:outputLabel>
+                                    <p:inputText id="documentIssuer" value="#{uavController.selectedTraveler.documentIssuer}" readonly="true"/>
+                                </div>
+                                <div class="ui-grid-col-6">
+                                    <p:outputLabel for="documentValidity">Document Validity</p:outputLabel>
+                                    <p:inputText id="documentValidity" value="#{uavController.selectedTraveler.documentValidity}" readonly="true"/>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </p:outputPanel>
+                </p:outputPanel>
+
+                <br></br>
+                <f:facet name="footer">
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageTravelerDetails').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+
+
+
+
+    </ui:define>
+
+</ui:composition>
+</html>

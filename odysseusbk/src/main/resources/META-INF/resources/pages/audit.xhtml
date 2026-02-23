@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Audit Logs</h2>
+
+        <f:metadata>
+            <f:event listener="#{odsAuditLogsController.onPageLoad}" type="preRenderView" />
+        </f:metadata>
+
+        <h:form>
+            <p:panelGrid columns="6" styleClass="ui-panelgrid-blank ui-fluid"
+                         columnClasses="ui-g-12 ui-md-1,ui-g-12 ui-md-5,ui-g-12 ui-md-1,ui-g-12 ui-md-5"
+                         layout="grid">
+                <p:outputLabel for="auditLogContent" value="Search on: "  styleClass="form-heading-style"/>
+                <p:inputText id="auditLogContent" value="#{odsAuditLogsController.nameFilter}">
+                    <p:ajax event="blur"  update="auditLogContent"/>
+                </p:inputText>
+                <p:commandButton id="filterButton" icon="pi pi-search" style="width: 150px"
+                                 value="Filter"
+                                 actionListener="#{odsAuditLogsController.filter()}"
+                                 update="odsAuditLogsForm"/>
+                <p:commandButton icon="pi pi-search" style="width: 150px;float:right;"
+                                 value="Reset"
+                                 actionListener="#{odsAuditLogsController.reset()}"
+                                 update="odsAuditLogsForm auditLogContent" />
+            </p:panelGrid>
+        </h:form>
+
+        <h:form id="odsAuditLogsForm">
+            <p:growl id="msgs" showDetail="true"/>
+            <p:dataTable id="dataTableOdsAudit" var="audit" value="#{odsAuditLogsController.odsAuditLogList}"
+                         selection="#{odsAuditLogsController.odsAuditLogSelected}"
+                         emptyMessage="No audit logs found with given criteria"
+                         showGridlines="true"
+                         rows="5" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,25,50,100,1000,10000">
+                <f:facet name="header">
+                    <div class="flex justify-content-between align-items-center">
+                        <div>List of Audit Logs</div>
+
+
+                        <div style="margin-left: auto; display: flex; gap: 10px; align-items: center;">
+                            <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify" />
+                            <p:columnToggler datasource="dataTableOdsAudit" trigger="toggler">
+                                <p:ajax />
+                            </p:columnToggler>
+                        </div>
+                    </div>
+                </f:facet>
+
+                <p:column headerText="Id"  width = "75" visible="false">
+                    <h:outputText value="#{audit.id}" />
+                </p:column>
+
+                <p:column headerText="Short text" width = "110" visible="false">
+                    <h:outputText value="#{audit.shortText}" />
+                </p:column>
+
+                <p:column headerText="Log text" width = "75">
+                    <h:outputText value="#{audit.logText}"  />
+                </p:column>
+
+                <p:column headerText="Creation Date" width="125" >
+                    <h:outputText value="#{audit.creationDate != null ? audit.creationDate.toString().substring(0, 19): ''}" />
+
+                </p:column>
+
+
+                <p:column headerText="Log Type" width = "125">
+                    <h:outputText value="#{audit.logType}" style="white-space: normal; word-wrap: break-word;" />
+                </p:column>
+
+                <p:column headerText="Application" width = "75" >
+                    <h:outputText value="#{audit.application}" />
+                </p:column>
+
+                <p:column headerText="Audit log column" width = "75">
+                    <h:outputText value="#{audit.auditLogcol}" />
+                </p:column>
+
+                <p:column headerText="Created by" width = "155">
+                    <h:outputText value="#{audit.createdBy}" style="white-space: normal; word-wrap: break-word;" />
+                </p:column>
+
+
+                <p:column headerText="Operation result" width = "75">
+                    <h:outputText value="#{audit.operationResult}" />
+                </p:column>
+
+                <p:column headerText="Comments" width = "75">
+                    <h:outputText value="#{audit.comments}" />
+                </p:column>
+
+                <p:column headerText="Transaction id" width = "75">
+                    <h:outputText value="#{audit.transactionId}" />
+                </p:column>
+
+                <p:column headerText="Document id" width = "75">
+                    <h:outputText value="#{audit.documentId}" />
+                </p:column>
+
+                <p:column headerText="Traveler id" width = "75">
+                    <h:outputText value="#{audit.travelerId}" />
+                </p:column>
+
+            </p:dataTable>
+
+
+        </h:form>
+    </ui:define>
+</ui:composition>
+</html>

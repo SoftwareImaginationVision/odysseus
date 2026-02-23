@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Check Identity</h2>
+
+
+
+        <h:form id="odsTravelerFormBCP">
+                    <p:growl id="msgs" showDetail="true"/>
+                    <p:dataTable id="dataTableOdsTravelerBCP" var="travelerBCP" value="#{odsTravelerController.odsTravelerListForBCP}"
+                                 selection="#{odsTravelerController.odsTravelerSelectedForBCP}"
+                                 emptyMessage="There aren't travelers that want to cross the border today"
+                                 showGridlines="true"
+                                 rows="5" paginator="true" paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+                        <f:facet name="header">
+                            <div class="flex justify-content-between align-items-center">
+                                List of Travelers
+
+                                <div>
+                                    <p:commandButton id="toggler" type="button" value="Columns" icon="pi pi-align-justify"/>
+                                    <p:columnToggler datasource="dataTableOdsTravelerBCP" trigger="toggler">
+                                        <p:ajax />
+                                    </p:columnToggler>
+                                </div>
+                            </div>
+                        </f:facet>
+
+                        <p:column headerText="ID" sortBy="#{travelerBCP.id}"  width ="55">
+                            <h:outputText value="#{travelerBCP.id}" />
+                        </p:column>
+
+                        <p:column headerText="First Name" sortBy="#{travelerBCP.firstName}" width ="55">
+                            <h:outputText value="#{travelerBCP.firstName}" />
+                        </p:column>
+
+                        <p:column headerText="Last Name" sortBy="#{travelerBCP.lastName}" width ="55">
+                            <h:outputText value="#{travelerBCP.lastName}" />
+                        </p:column>
+
+                        <p:column headerText="Date of birth" sortBy="#{travelerBCP.dateOfBirth}"  width ="95">
+                            <h:outputText value="#{travelerBCP.dateOfBirth}" />
+                        </p:column>
+
+                        <p:column headerText="Place of birth" width ="75" visible="false">
+                            <h:outputText value="#{travelerBCP.placeOfBirth}" />
+                        </p:column>
+
+                        <p:column headerText="Street" width ="125" visible="false">
+                            <h:outputText value="#{travelerBCP.street}" />
+                        </p:column>
+
+                        <p:column headerText="Street details" width ="125" visible="false">
+                            <h:outputText value="#{travelerBCP.streetDetails}" />
+                        </p:column>
+
+                        <p:column headerText="City" width ="75">
+                            <h:outputText value="#{travelerBCP.city}" />
+                        </p:column>
+
+                        <p:column headerText="County" width ="75" visible="false">
+                            <h:outputText value="#{travelerBCP.county}" />
+                        </p:column>
+
+                        <p:column headerText="Country code" width ="75">
+                            <h:outputText value="#{travelerBCP.countryCode}" />
+                        </p:column>
+
+                        <p:column headerText="Zip code" width ="75" visible="false">
+                            <h:outputText value="#{travelerBCP.zipCode}" />
+                        </p:column>
+
+                        <p:column headerText="Phone" width ="125">
+                            <h:outputText value="#{travelerBCP.phone}" />
+                        </p:column>
+
+                        <p:column headerText="Social media" width ="75" visible="false">
+                            <h:outputText value="#{travelerBCP.socialMedia}" />
+                        </p:column>
+
+                        <p:column headerText="Additional info" width ="125">
+                            <h:outputText value="#{travelerBCP.additionalInfo}" />
+                        </p:column>
+
+                        <p:column headerText="Document type" width ="85">
+                            <h:outputText value="#{travelerBCP.documentType}" />
+                        </p:column>
+
+                        <p:column headerText="Document number" width ="125">
+                            <h:outputText value="#{travelerBCP.documentNumber}" />
+                        </p:column>
+
+                        <p:column headerText="Document issuer" width ="125" visible="false">
+                            <h:outputText value="#{travelerBCP.documentIssuer}" />
+                        </p:column>
+
+                        <p:column headerText="Document validity" width ="75">
+                            <h:outputText value="#{travelerBCP.documentValidity}" />
+                        </p:column>
+
+                        <p:column headerText="Personal id" width ="75">
+                            <h:outputText value="#{travelerBCP.personalId}" />
+                        </p:column>
+
+                        <p:column headerText="UUID" width ="75">
+                            <h:outputText value="#{travelerBCP.tuuid}" />
+                        </p:column>
+
+                        <p:column headerText="Picture" width="75">
+                            <p:commandButton value="Show" update="imageFormBCP"
+                                             oncomplete="PF('preregistredPicture').show()">
+                                <f:setPropertyActionListener value="#{travelerBCP}"
+                                                             target="#{odsTravelerController.odsTravelerSelectedForBCP}" />
+                                <f:actionListener binding="#{odsTravelerController.settingPictureFromTravelerBCP()}"/>
+                            </p:commandButton>
+                        </p:column>
+
+
+                        <p:column headerText="Actions" width = "75">
+                            <p:commandButton value="Verify" style="width: 80px; height: 40px; font-size: 14px;">
+                                  <f:setPropertyActionListener value="#{travelerBCP}"
+                                                               target="#{odsTravelerController.odsTravelerSelectedForBCP}" />
+                                     <f:actionListener binding="#{odsTravelerController.verifyTravelerIdentityByBCP()}"/>
+                            </p:commandButton>
+
+
+                        </p:column>
+
+                    </p:dataTable>
+
+                </h:form>
+
+
+        <h:form id="imageFormBCP">
+            <p:dialog id="showPicture" header="Picture" widgetVar="preregistredPicture" responsive="true" showEffect="fade">
+                <p:outputPanel id="manage-preregistredPicture-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty odsTravelerController.odsTravelerSelectedForBCP}">
+                        <p:graphicImage
+                                cache="false"
+                                value="#{odsTravelerController.imageBCP}"
+                                style="max-width: 150px; max-height: 300px; " />
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('preregistredPicture').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+</html>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Kafka Topics</h2>
+
+        <h:form id="kafkaTopicsForm">
+            <p:growl id="msgs" showDetail="true"/>
+            <p:dataTable id="dataTableTopics" var="topic" value="#{kafkaController.kafkaTopicsSet}"
+                         selection="#{kafkaController.topicSelected}"
+                         emptyMessage="No topic found with given criteria"
+                         showGridlines="true"
+                         rows="5" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+
+
+                <p:column headerText="Topic Name">
+                    <h:outputText value="#{topic.name}" />
+                </p:column>
+
+
+                <p:column headerText="Actions">
+
+                    <p:commandButton icon="pi pi-send"  id="sendMessageOnTopic"
+                                     update="dialogsSendMessageOnTopic"
+                                     oncomplete="PF('manageTopicMessage').show()"
+                                     styleClass="edit-button rounded-button ui-button-success">
+                        <f:setPropertyActionListener value="#{topic}"
+                                                     target="#{kafkaController.topicSelected}" />
+                    </p:commandButton>
+                    <p:tooltip for="sendMessageOnTopic" value="Send Messsge" showEffect="clip" hideEffect="fold" position="top"/>
+
+                    <p:commandButton icon="pi pi-inbox"  id="readMessageFromTopic"
+                                     update="dialogsReceivedMessagesFromTopic"
+                                     oncomplete="PF('manageReceivedMessages').show()"
+                                     styleClass="edit-button rounded-button ui-button-success">
+                        <f:setPropertyActionListener value="#{topic}"
+                                                     target="#{kafkaController.topicSelected}" />
+                        <f:actionListener binding="#{kafkaController.getMessages()}"/>
+                    </p:commandButton>
+                    <p:tooltip for="readMessageFromTopic" value="See topic messages" showEffect="clip" hideEffect="fold" position="top"/>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </h:form>
+
+        <h:form id="dialogsSendMessageOnTopic">
+            <p:dialog header="Send Message to topic: #{kafkaController.topicSelected}" showEffect="fade" widgetVar="manageTopicMessage"
+                      responsive="true">
+                <p:outputPanel id="manage-manageTopicMessage-content" class="ui-fluid">
+                        <div class="field">
+                            <p:outputLabel for="messageOnTopic">Message (JSON)</p:outputLabel>
+                            <p:inputTextarea id="messageOnTopic" rows="8"
+                                         value="#{kafkaController.messageForTopic.message}"/>
+                        </div>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{kafkaController.sendMessage}"
+                                     oncomplete="PF('manageTopicMessage').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageTopicMessage').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="dialogsReceivedMessagesFromTopic">
+            <p:dialog header="Recived messages from topic: #{kafkaController.topicSelected}" showEffect="fade" widgetVar="manageReceivedMessages"
+                      responsive="true" >
+                <p:outputPanel id="manage-manageReceivedMessages-content" class="ui-fluid" style="width: 600px!important;">
+                    <p:dataTable id="dataTableTopicsMessages" var="messageFromTopic" value="#{kafkaController.kafkaMessagesList}"
+                                 showGridlines="true"
+                                 rows="5" paginator="true" paginatorPosition="bottom"
+                                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                 currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                                 rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+
+
+                        <p:column headerText="Type">
+                            <h:outputText value="Message" />
+                        </p:column>
+
+                        <p:column headerText="Content">
+                            <p:commandButton icon="pi pi-eye"  id="showMessageFromTopic"
+                                             styleClass="edit-button rounded-button ui-button-success">
+                            </p:commandButton>
+                            <p:overlayPanel for="showMessageFromTopic" showCloseIcon="true" dismissable="true" dynamic="true">
+                                <h:outputText value="#{messageFromTopic.message}"/>
+                            </p:overlayPanel>
+
+                        </p:column>
+
+                    </p:dataTable>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageReceivedMessages').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+</html>

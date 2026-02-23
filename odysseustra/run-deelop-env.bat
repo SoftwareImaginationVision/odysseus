@@ -1,0 +1,1 @@
+java -Dspring.profiles.active=development -jar target/homeapp-0.0.1-SNAPSHOT.jar

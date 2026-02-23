@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html   lang="en-us"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Workflow Management</h2>
+
+        <h:form>
+            <p:panelGrid columns="6" styleClass="ui-panelgrid-blank ui-fluid"
+                         columnClasses="ui-g-12 ui-md-1,ui-g-12 ui-md-5,ui-g-12 ui-md-1,ui-g-12 ui-md-5"
+                         layout="grid">
+                <p:outputLabel for="workflowcontent" value="Search on: "  styleClass="form-heading-style"/>
+                <p:inputText id="workflowcontent" value="#{workflowManagementController.nameFilter}">
+                    <p:ajax event="blur"  update="workflowcontent"/>
+                </p:inputText>
+                <p:commandButton id="filterButton" icon="pi pi-search" style="width: 150px"
+                                 value="Filter"
+                                 actionListener="#{workflowManagementController.filter()}"
+                                 update="odsWorkflowForm"/>
+                <p:commandButton icon="pi pi-search" style="width: 150px;float:right;"
+                                 value="Reset"
+                                 actionListener="#{workflowManagementController.reset()}"
+                                 update="odsWorkflowForm workflowcontent" />
+            </p:panelGrid>
+        </h:form>
+
+        <h:form id="odsWorkflowForm">
+            <p:growl id="msgs" showDetail="true"/>
+            <p:dataTable id="dataTableOdsWorkflow" var="workflow" value="#{workflowManagementController.odsWorkflowsList}"
+                         selection="#{workflowManagementController.odsWorkflowSelected}"
+                         emptyMessage="No workflow found with given criteria"
+                         showGridlines="true"
+                         rows="5" paginator="true" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                         rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+
+                <p:column headerText="ID" sortBy="#{workflow.id}" sortOrder="descending">
+                    <h:outputText value="#{workflow.id}" />
+                </p:column>
+
+                <p:column headerText="Workflow Name" sortBy="#{workflow.workflowName}">
+                    <h:outputText value="#{workflow.workflowName}" />
+                </p:column>
+
+                <p:column headerText="Creation Date" sortBy="#{workflow.creationDate}">
+                    <h:outputText value="#{workflow.creationDate}" />
+                </p:column>
+
+                <p:column headerText="Instance Duration" sortBy="#{workflow.instanceDuration}">
+                    <h:outputText value="#{workflow.instanceDuration}" />
+                </p:column>
+
+                <p:column headerText="Actions">
+
+                    <p:commandButton icon="pi pi-pencil" update=":dialogsOdsWorkflow:manage-odsWorkflow-content" id="editOdsWorkflow"
+                                     oncomplete="PF('manageOdsWorkflow').show()"
+                                     styleClass="edit-button rounded-button ui-button-success">
+                        <f:setPropertyActionListener value="#{workflow}"
+                                                     target="#{workflowManagementController.odsWorkflowSelected}" />
+                    </p:commandButton>
+                    <p:tooltip for="editOdsWorkflow" value="Edit" showEffect="clip" hideEffect="fold" position="top"/>
+
+                    <p:commandButton class="ui-button-warning rounded-button" id="deleteOdsWorkflow"
+                                     oncomplete="PF('deleteOdsWorkflowDialog').show()"
+                                     icon="pi pi-trash">
+                        <f:setPropertyActionListener value="#{workflow}"
+                                                     target="#{workflowManagementController.odsWorkflowSelected}" />
+                    </p:commandButton>
+
+                    <p:tooltip for="deleteOdsWorkflow" value="Delete" showEffect="clip" hideEffect="fold" position="top"/>
+
+                    <p:commandButton class="ui-button-info rounded-button" id="createWorkflow"
+                                     action="createWorkflow?faces-redirect=true" actionListener="#{workflowManagementController.resetWorkflow}"
+                                     icon="pi pi-sitemap">
+                        <f:setPropertyActionListener value="#{workflow}"
+                                                     target="#{workflowManagementController.odsWorkflowSelected}" />
+                    </p:commandButton>
+
+                    <p:tooltip for="createWorkflow" value="Create Workflow" showEffect="clip" hideEffect="fold" position="top"/>
+
+                </p:column>
+
+            </p:dataTable>
+
+            <p:toolbar >
+                <p:toolbarGroup>
+                    <p:commandButton value="New Workflow" icon="pi pi-plus"
+                                     actionListener="#{workflowManagementController.createNewOdsWorkflow}"
+                                     update=":dialogsOdsWorkflow:manage-odsWorkflow-content"
+                                     oncomplete="PF('manageOdsWorkflow').show()"
+                                     style="width: 150px;float:right;margin-right: 2.5rem"
+                                     styleClass="ui-button-success" >
+                        <p:resetInput target=":dialogsOdsWorkflow:manage-odsWorkflow-content" />
+                    </p:commandButton>
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
+
+        <h:form id="dialogsOdsWorkflow">
+            <p:dialog header="Workflow" showEffect="fade" widgetVar="manageOdsWorkflow"
+                      responsive="true">
+                <p:outputPanel id="manage-odsWorkflow-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty workflowManagementController.odsWorkflowSelected}">
+                        <div class="field">
+                            <p:outputLabel for="workflowName">Workflow Name</p:outputLabel>
+                            <p:inputText id="workflowName"
+                                         value="#{workflowManagementController.odsWorkflowSelected.workflowName}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="instanceDuration">Instance Duration</p:outputLabel>
+                            <p:inputNumber id="instanceDuration" decimalPlaces="0" converter="javax.faces.Integer"
+                                         value="#{workflowManagementController.odsWorkflowSelected.instanceDuration}" />
+                        </div>
+
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{workflowManagementController.saveOdsWorkflow}"
+                                     update="odsWorkflowForm:dataTableOdsWorkflow"
+                                     oncomplete="PF('manageOdsWorkflow').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageOdsWorkflow').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formConfirmDialog">
+
+            <p:confirmDialog widgetVar="deleteOdsWorkflowDialog" showEffect="fade" width="300"
+                             message="Delete the workflow?" header="Confirm" severity="warn" appendTo="@(body)" >
+                <p:commandButton value="Yes" icon="pi pi-check"
+                                 actionListener="#{workflowManagementController.deleteOdsWorkflow}"
+                                 oncomplete="PF('deleteOdsWorkflowDialog').hide()" />
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteOdsWorkflowDialog').hide()" />
+            </p:confirmDialog>
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>
+</html>
+

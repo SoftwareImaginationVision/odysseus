@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<ui:composition template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Verify status</h2>
+
+        <f:metadata>
+            <f:event listener="#{workflowManagementController.onPageLoad}" type="preRenderView" />
+        </f:metadata>
+
+        <h:form  id="form" >
+            <p:growl id="msgs" showDetail="true" skipDetailIfEqualsSummary="true"/>
+
+            <h:outputLabel  value="The process has been successfully completed."   style="margin-left: 5px; background-color: #7ab02c; font-size: x-large; font: bold"
+                            rendered="#{not empty workflowManagementController.odsWorkflowInstanceActive and workflowManagementController.odsWorkflowInstanceActive.workflowStatus.equalsIgnoreCase('Inactive')
+                            and workflowManagementController.odsWorkflowInstanceActive.resultWorkflow.equalsIgnoreCase('pass')}" />
+
+            <h:outputLabel  value="The process hasn`t been completed."   style="margin-left: 5px; background-color: red; font-size: x-large; font: bolder"
+                            rendered="#{not empty workflowManagementController.odsWorkflowInstanceActive and workflowManagementController.odsWorkflowInstanceActive.workflowStatus.equalsIgnoreCase('Inactive')
+                            and workflowManagementController.odsWorkflowInstanceActive.resultWorkflow.equalsIgnoreCase('reject')}" />
+            <br></br>
+            <h:outputLabel  value="Currently there is no active workflow and below you will find the last inactive workflow completed by you."   style="margin-left: 5px"
+                            rendered="#{not empty workflowManagementController.odsWorkflowInstanceActive and workflowManagementController.odsWorkflowInstanceActive.workflowStatus.equalsIgnoreCase('Inactive') }" />
+
+            <h:outputLabel  value="Currently there is no active workflow and you didn`t complete any."   style="margin-left: 5px"
+                            rendered="#{empty workflowManagementController.odsWorkflowInstanceActive}" />
+            <br></br>
+            <h:outputLabel  value="To see the #{workflowManagementController.odsWorkflowInstanceActive.workflowName} workflow, click on the button    "   style="margin-left: 5px"
+                            rendered="#{not empty workflowManagementController.odsWorkflowInstanceActive}" />
+            <p:commandButton value="Show Workflow" actionListener="#{workflowManagementController.createDiagramForTraveler()}" update="diagram"
+                             widgetVar="showButton" rendered="#{not empty workflowManagementController.odsWorkflowInstanceActive}"
+                             onclick="PF('showButton').disable()" >
+            </p:commandButton>
+
+
+
+
+            <style type="text/css">
+                .my-box-green-active {
+                    border:1px solid #aaa;
+                    width:330px;
+                    height:60px;
+                    background:#2eb82e;
+                    text-align: center ;
+                    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+                }
+                .my-box-grey-inactive {
+                    border:1px solid #aaa;
+                    width:330px;
+                    height:60px;
+                    background: #a6a6a6;
+                    text-align: center;
+                    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.4);
+                }
+                .flow-label {
+                    font-size: 24px;
+                    font-weight: bold;
+                    color: #C34A2C;
+                }
+            </style>
+            <div class="card">
+                <p:diagram id="diagram" var="diag" value="#{workflowManagementController.modelForTraveler}" rendered="#{not empty workflowManagementController.modelForTraveler}"  style="height:800px; width: 800px;" styleClass="ui-widget-content">
+                </p:diagram>
+                <p:remoteCommand name="elementClicked" actionListener="#{workflowManagementController.elementSelected()}"/>
+                <script type="text/javascript">
+                    $(document).on('click', '.ui-diagram > .ui-diagram-element', function(info){
+                        elementClicked([ {
+                            name : 'elementId',
+                            value : info.target.id
+                        } ]);
+                    });
+                </script>
+            </div>
+
+
+        </h:form>
+
+        <h:form id="elementDetails">
+            <p:dialog id="dialogElementDetails" header="Node Details" widgetVar="dialogElementDetails" responsive="true" showEffect="fade">
+                    <p:outputPanel id="manage-element-content" class="ui-fluid">
+                        <p:outputPanel rendered="#{not empty workflowManagementController.odsWorkflowInstanceNodeActive}">
+                            <div class="field">
+                                <p:outputLabel for="nodeName">Node Name</p:outputLabel>
+                                <p:inputText id="nodeName" readonly="true"
+                                             value="#{workflowManagementController.odsWorkflowInstanceNodeActive.nodeName}"/>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="nodeText">Description</p:outputLabel>
+                                <p:inputTextarea id="nodeText" readonly="true" rows="4"
+                                             value="#{workflowManagementController.odsWorkflowInstanceNodeActive.nodeText}"/>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="nodeStatus">Node Status</p:outputLabel>
+                                <p:inputText id="nodeStatus" readonly="true"
+                                             value="#{workflowManagementController.odsWorkflowInstanceNodeActive.nodeStatus}"/>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="createdOn">Created on</p:outputLabel>
+                                <p:inputText id="createdOn" readonly="true"
+                                             value="#{workflowManagementController.odsWorkflowInstanceNodeActive.createdOn}"/>
+                            </div>
+
+                            <div class="field">
+                                <p:outputLabel for="workflowInstanceName">Workflow Instance Name</p:outputLabel>
+                                <p:inputText id="workflowInstanceName" readonly="true"
+                                             value="#{workflowManagementController.odsWorkflowInstanceActive.workflowName}"/>
+                            </div>
+
+                        </p:outputPanel>
+                    </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('dialogElementDetails').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+</html>

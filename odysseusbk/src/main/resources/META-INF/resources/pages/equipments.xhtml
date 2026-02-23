@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html   lang="en-us"
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:pe="http://primefaces.org/ui/extensions">
+
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+                template="../template.xhtml">
+    <ui:define name="content-center">
+        <h2 style="text-align: center;">Equipments</h2>
+
+        <h:form>
+            <p:panelGrid columns="6" styleClass="ui-panelgrid-blank ui-fluid"
+                         columnClasses="ui-g-12 ui-md-1,ui-g-12 ui-md-5,ui-g-12 ui-md-1,ui-g-12 ui-md-5"
+                         layout="grid">
+                <p:outputLabel for="devicecontent" value="Search on: "  styleClass="form-heading-style"/>
+                <p:inputText id="devicecontent" value="#{odsDeviceController.nameFilter}">
+                    <p:ajax event="blur"  update="devicecontent"/>
+                </p:inputText>
+                <p:commandButton id="filterButton" icon="pi pi-search" style="width: 150px"
+                                 value="Filter"
+                                 actionListener="#{odsDeviceController.filter()}"
+                                 update="odsDeviceForm"/>
+                <p:commandButton icon="pi pi-search" style="width: 150px;float:right;"
+                                 value="Reset"
+                                 actionListener="#{odsDeviceController.reset()}"
+                                 update="odsDeviceForm devicecontent" />
+            </p:panelGrid>
+        </h:form>
+
+        <h:form id="odsDeviceForm">
+            <p:growl id="msgs" showDetail="true"/>
+                <p:dataTable id="dataTableOdsDevice" var="device" value="#{odsDeviceController.deviceList}"
+                             selection="#{odsDeviceController.odsDeviceSelected}"
+                             emptyMessage="No devices found with given criteria"
+                             showGridlines="true"
+                             rows="5" paginator="true" paginatorPosition="bottom"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             currentPageReportTemplate="{startRecord}-{endRecord} of {totalRecords} records"
+                             rowsPerPageTemplate="5,10,15,25,50,100,{ShowAll|'All'}">
+                    <p:column headerText="ID" sortBy="#{device.id}" sortOrder="descending">
+                        <h:outputText value="#{device.id}" />
+                    </p:column>
+
+                    <p:column headerText="Device Name" sortBy="#{device.deviceName}">
+                        <h:outputText value="#{device.deviceName}" />
+                    </p:column>
+
+                    <p:column headerText="Device Type" sortBy="#{device.deviceType}">
+                        <h:outputText value="#{device.deviceType}" />
+                    </p:column>
+
+                    <p:column headerText="Description" sortBy="#{device.description}">
+                        <h:outputText value="#{device.description}" />
+                    </p:column>
+
+                    <p:column headerText="UM" sortBy="#{device.um}">
+                        <h:outputText value="#{device.um}" />
+                    </p:column>
+
+                    <p:column headerText="Guid" sortBy="#{device.guid}">
+                        <h:outputText value="#{device.guid}" />
+                    </p:column>
+
+                    <p:column headerText="Max Value" sortBy="#{device.maxValue}">
+                        <h:outputText value="#{device.maxValue}" />
+                    </p:column>
+
+                    <p:column headerText="Min Value" sortBy="#{device.minValue}">
+                        <h:outputText value="#{device.minValue}" />
+                    </p:column>
+
+                    <p:column headerText="Actions">
+                        <p:commandButton icon="pi pi-pencil" update=":dialogsOdsDevice:manage-odsDevice-content" id="editOdsDevice"
+                                         oncomplete="PF('manageOdsDevice').show()"
+                                         styleClass="edit-button rounded-button ui-button-success">
+                            <f:setPropertyActionListener value="#{device}"
+                                                         target="#{odsDeviceController.odsDeviceSelected}" />
+                        </p:commandButton>
+                        <p:tooltip for="editOdsDevice" value="Edit" showEffect="clip" hideEffect="fold" position="top"/>
+
+                        <p:commandButton class="ui-button-warning rounded-button" id="deleteOdsDevice"
+                                         oncomplete="PF('deleteOdsDeviceDialog').show()"
+                                         icon="pi pi-trash">
+                            <f:setPropertyActionListener value="#{device}"
+                                                         target="#{odsDeviceController.odsDeviceSelected}" />
+                        </p:commandButton>
+
+                        <p:tooltip for="deleteOdsDevice" value="Delete" showEffect="clip" hideEffect="fold" position="top"/>
+                    </p:column>
+
+                </p:dataTable>
+
+            <p:toolbar >
+                <p:toolbarGroup>
+                    <p:commandButton value="New Equipment" icon="pi pi-plus"
+                                     actionListener="#{odsDeviceController.createNewOdsDevice}"
+                                     update=":dialogsOdsDevice:manage-odsDevice-content"
+                                     oncomplete="PF('manageOdsDevice').show()"
+                                     style="width: 150px;float:right;margin-right: 2.5rem; background-color: #1c7d73;"
+
+                    >
+                        <p:resetInput target=":dialogsOdsDevice:manage-odsDevice-content" />
+                    </p:commandButton>
+                </p:toolbarGroup>
+            </p:toolbar>
+        </h:form>
+
+        <h:form id="dialogsOdsDevice">
+            <p:dialog header="Equipment" showEffect="fade" widgetVar="manageOdsDevice"
+                      responsive="true">
+                <p:outputPanel id="manage-odsDevice-content" class="ui-fluid">
+                    <p:outputPanel rendered="#{not empty odsDeviceController.odsDeviceSelected}">
+                        <div class="field">
+                            <p:outputLabel for="odsDeviceName">Device Name</p:outputLabel>
+                            <p:inputText id="odsDeviceName"
+                                         value="#{odsDeviceController.odsDeviceSelected.deviceName}"/>
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="description">Description</p:outputLabel>
+                            <p:inputText id="description"
+                                         value="#{odsDeviceController.odsDeviceSelected.description}" />
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="deviceType">Device Type</p:outputLabel>
+                            <p:inputText id="deviceType"
+                                         value="#{odsDeviceController.odsDeviceSelected.deviceType}" />
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="guid">Guid</p:outputLabel>
+                            <p:inputText id="guid"
+                                         value="#{odsDeviceController.odsDeviceSelected.guid}" />
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="um">UM</p:outputLabel>
+                            <p:inputText id="um"
+                                         value="#{odsDeviceController.odsDeviceSelected.um}" />
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="maxValue">Max value</p:outputLabel>
+                            <p:inputText id="maxValue"
+                                         value="#{odsDeviceController.odsDeviceSelected.maxValue}" />
+                        </div>
+                        <div class="field">
+                            <p:outputLabel for="minValue">Min Value</p:outputLabel>
+                            <p:inputText id="minValue"
+                                         value="#{odsDeviceController.odsDeviceSelected.minValue}" />
+                        </div>
+
+                    </p:outputPanel>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:commandButton value="Save" icon="pi pi-check"
+                                     actionListener="#{odsDeviceController.saveOdsDevice}"
+                                     update="odsDeviceForm:dataTableOdsDevice"
+                                     oncomplete="PF('manageOdsDevice').hide()"   />
+                    <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageOdsDevice').hide()"
+                                     class="ui-button-secondary" type="button" />
+                </f:facet>
+            </p:dialog>
+        </h:form>
+
+        <h:form id="formConfirmDialog">
+
+            <p:confirmDialog widgetVar="deleteOdsDeviceDialog" showEffect="fade" width="300"
+                             message="Delete the equipment?" header="Confirm" severity="warn" appendTo="@(body)" >
+                <p:commandButton value="Yes" icon="pi pi-check"
+                                 actionListener="#{odsDeviceController.deleteOdsDevice}"
+                                 oncomplete="PF('deleteOdsDeviceDialog').hide()" />
+                <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                                 onclick="PF('deleteOdsDeviceDialog').hide()" />
+            </p:confirmDialog>
+
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+</html>

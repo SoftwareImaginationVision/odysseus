@@ -1,0 +1,31 @@
+package KieRule;
+import ro.simavi.odysseus.platform.kafka.Greeting;
+import ro.simavi.odysseus.platform.entities.OdsDevice;
+import ro.simavi.odysseus.platform.entities.OdsDocument;
+
+rule "Test-Drool"
+salience 0
+when
+    $eom:Greeting(getName().equals("Ionut"))
+then
+    System.out.println("==> Rule " + "Test-Drool" + " was applied" );
+    System.out.println($eom.toString());
+end
+
+rule "Test-Drool-Device"
+salience 0
+when
+    $eom:OdsDevice(getDeviceName().equals("Radar"))
+then
+    System.out.println("==> Rule " + "Test-Drool-Device" + " was applied" );
+    System.out.println($eom.toString());
+end
+
+rule "Ukrainian traveler"
+salience 0
+when
+    $eom:OdsDocument(getCitizenship().equals("Ukrainian") || getCitizenship().equals("ukrainian") && checkAgeBetween30And50(getDateOfBirth()))
+then
+    System.out.println("==> Rule " + "Ukrainian traveler" + " was applied" );
+    System.out.println($eom.toString());
+end
